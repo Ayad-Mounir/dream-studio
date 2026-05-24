@@ -1,0 +1,2695 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#ff6eb4" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>استوديو الأحلام 🌟</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="manifest" href="#" id="pwa-manifest-link" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23ff6eb4'/%3E%3Ctext x='50%25' y='55%25' font-size='320' text-anchor='middle' dominant-baseline='middle'%3E🌟%3C/text%3E%3C/svg%3E" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ─── Reset & Base ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%; width: 100%;
+      overflow: hidden;
+      font-family: 'Tajawal', sans-serif;
+      touch-action: manipulation;
+    }
+
+    /* ══════════════════════════════════════════
+       SHARED BACKGROUND GRADIENT
+    ══════════════════════════════════════════ */
+    .dream-bg {
+      position: fixed; inset: 0;
+      background: linear-gradient(160deg,
+        #ffb3de 0%, #e87fff 25%, #a78bfa 50%, #fb7aae 75%, #ffcce0 100%);
+      background-size: 300% 300%;
+      animation: bgShift 8s ease-in-out infinite alternate;
+    }
+    @keyframes bgShift {
+      0%   { background-position: 0% 0%; }
+      100% { background-position: 100% 100%; }
+    }
+
+    /* ══════════════════════════════════════════
+       SCREEN MANAGER
+    ══════════════════════════════════════════ */
+    .screen {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      overflow: hidden;
+      transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+    .screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.95);
+    }
+    .screen.slide-out-left {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-60px) scale(0.95);
+    }
+    .screen.slide-in-right {
+      animation: slideInRight 0.55s cubic-bezier(0.34,1.4,0.64,1) both;
+    }
+    @keyframes slideInRight {
+      0% { opacity: 0; transform: translateX(80px) scale(0.93); }
+      100% { opacity: 1; transform: translateX(0) scale(1); }
+    }
+
+    /* ══════════════════════════════════════════
+       FLOATING STARS (shared)
+    ══════════════════════════════════════════ */
+    .stars-layer {
+      position: absolute; inset: 0;
+      pointer-events: none; z-index: 1; overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      animation: floatStar linear infinite;
+      opacity: 0;
+      filter: drop-shadow(0 0 6px rgba(255,255,255,0.8));
+    }
+    @keyframes floatStar {
+      0%   { transform: translateY(110vh) rotate(0deg) scale(0.5); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 0.9; }
+      100% { transform: translateY(-15vh) rotate(360deg) scale(1.2); opacity: 0; }
+    }
+
+    /* Clouds */
+    .cloud {
+      position: absolute; border-radius: 50px;
+      background: rgba(255,255,255,0.18);
+      pointer-events: none; animation: cloudDrift linear infinite; z-index: 2;
+    }
+    @keyframes cloudDrift {
+      0%   { transform: translateX(-20%) scaleX(1); }
+      50%  { transform: translateX(5%) scaleX(1.03); }
+      100% { transform: translateX(-20%) scaleX(1); }
+    }
+
+    /* Corner deco */
+    .corner-deco {
+      position: absolute; font-size: clamp(26px,6vw,44px);
+      opacity: 0.55; animation: cornerPulse 3s ease-in-out infinite;
+      pointer-events: none; z-index: 5;
+    }
+    .corner-deco:nth-child(1) { top:clamp(8px,2vw,18px); right:clamp(8px,2vw,18px); }
+    .corner-deco:nth-child(2) { top:clamp(8px,2vw,18px); left:clamp(8px,2vw,18px); animation-delay:.5s; }
+    .corner-deco:nth-child(3) { bottom:clamp(8px,2vw,18px); right:clamp(8px,2vw,18px); animation-delay:1s; }
+    .corner-deco:nth-child(4) { bottom:clamp(8px,2vw,18px); left:clamp(8px,2vw,18px); animation-delay:1.5s; }
+    @keyframes cornerPulse {
+      0%,100% { transform:scale(1) rotate(0deg); }
+      50% { transform:scale(1.2) rotate(15deg); }
+    }
+
+    /* ══════════════════════════════════════════
+       SCREEN 1 — WELCOME
+    ══════════════════════════════════════════ */
+    #welcome-content {
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: clamp(14px,3.5vw,28px);
+      padding: clamp(20px,5vw,40px);
+      width: 100%; max-width: 520px; text-align: center;
+    }
+    #doll-wrapper {
+      animation: dollFloat 3s ease-in-out infinite;
+      filter: drop-shadow(0 12px 30px rgba(168,85,247,0.4));
+    }
+    @keyframes dollFloat {
+      0%,100% { transform: translateY(0px) rotate(-2deg); }
+      50% { transform: translateY(-16px) rotate(2deg); }
+    }
+    #title-main {
+      font-size: clamp(26px,7.5vw,50px); font-weight: 900; line-height:1.15;
+      color: #fff;
+      text-shadow: 0 2px 0 rgba(0,0,0,0.08), 0 4px 16px rgba(168,85,247,0.5), 0 0 40px rgba(255,255,255,0.3);
+      animation: titlePop 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes titlePop {
+      0% { transform:scale(0.3) rotate(-8deg); opacity:0; }
+      100% { transform:scale(1) rotate(0deg); opacity:1; }
+    }
+    #title-sub {
+      font-size: clamp(13px,3.8vw,21px); font-weight: 700;
+      color: rgba(255,255,255,0.92);
+      animation: titlePop 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.15s both;
+      background: rgba(255,255,255,0.18); backdrop-filter: blur(8px);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      padding: 6px 20px; border-radius: 50px;
+    }
+    .sparkle-row {
+      display: flex; gap: 8px;
+      font-size: clamp(16px,4.5vw,26px);
+      animation: sparkleRow 1.2s ease both 0.3s;
+    }
+    @keyframes sparkleRow {
+      0% { opacity:0; transform:scale(0.5); }
+      100% { opacity:1; transform:scale(1); }
+    }
+    .sparkle-icon { display:inline-block; animation: spinGlow 2s ease-in-out infinite; }
+    .sparkle-icon:nth-child(2){animation-delay:.3s}
+    .sparkle-icon:nth-child(3){animation-delay:.6s}
+    .sparkle-icon:nth-child(4){animation-delay:.9s}
+    .sparkle-icon:nth-child(5){animation-delay:1.2s}
+    @keyframes spinGlow {
+      0%,100%{transform:scale(1) rotate(0deg); filter:drop-shadow(0 0 4px rgba(255,255,100,.6));}
+      50%{transform:scale(1.3) rotate(20deg); filter:drop-shadow(0 0 12px rgba(255,255,100,1));}
+    }
+    #btn-start {
+      position:relative; font-family:'Tajawal',sans-serif;
+      font-size: clamp(19px,5vw,28px); font-weight:900;
+      color:#c026d3; background:#fff; border:none; border-radius:60px;
+      padding: clamp(13px,3.5vw,18px) clamp(38px,11vw,75px);
+      cursor:pointer;
+      box-shadow: 0 6px 0 #d946ef, 0 10px 40px rgba(192,38,211,.45), inset 0 1px 0 rgba(255,255,255,.8);
+      animation: btnBounce 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.5s both;
+      transition: transform .12s, box-shadow .12s;
+      overflow:hidden; min-width:210px; letter-spacing:.3px;
+    }
+    @keyframes btnBounce {
+      0%{transform:scale(0) translateY(30px);opacity:0;}
+      100%{transform:scale(1) translateY(0);opacity:1;}
+    }
+    #btn-start::before {
+      content:''; position:absolute; top:0; left:-120%;
+      width:80%; height:100%;
+      background:linear-gradient(120deg,transparent,rgba(255,255,255,.7),transparent);
+      animation: shimmer 2.5s ease-in-out infinite 1.5s;
+      transform:skewX(-20deg);
+    }
+    @keyframes shimmer { 0%{left:-120%} 100%{left:160%} }
+    #btn-start:active { transform:scale(0.95) translateY(3px); box-shadow:0 2px 0 #d946ef,0 4px 16px rgba(192,38,211,.35); }
+    #btn-start::after {
+      content:''; position:absolute; inset:-4px; border-radius:64px;
+      border:3px solid rgba(255,255,255,.5);
+      animation:pulseRing 2s ease-out infinite 2s;
+    }
+    @keyframes pulseRing { 0%{transform:scale(1);opacity:.8;} 100%{transform:scale(1.2);opacity:0;} }
+    #footer-badge {
+      font-size:clamp(11px,2.8vw,14px); color:rgba(255,255,255,.8); font-weight:700;
+      animation:fadeSlideUp 1s ease both 0.9s;
+      display:flex; align-items:center; gap:6px;
+    }
+    @keyframes fadeSlideUp {
+      0%{opacity:0;transform:translateY(16px);}
+      100%{opacity:1;transform:translateY(0);}
+    }
+
+    /* ══════════════════════════════════════════
+       SCREEN 2 — CHARACTER SELECT
+    ══════════════════════════════════════════ */
+    #char-screen {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    #char-screen .dream-bg { z-index: -1; }
+
+    #char-content {
+      position: relative; z-index: 10;
+      width: 100%; max-width: 600px;
+      padding: clamp(12px,3vw,28px) clamp(12px,4vw,28px);
+      display: flex; flex-direction: column;
+      align-items: center; gap: clamp(14px,3.5vw,24px);
+      min-height: 100vh; justify-content: center;
+    }
+
+    /* Back button */
+    #btn-back {
+      position: fixed; top: clamp(10px,2.5vw,18px); right: clamp(10px,2.5vw,18px);
+      z-index: 100;
+      font-family:'Tajawal',sans-serif; font-size:clamp(13px,3.5vw,17px); font-weight:800;
+      color:#c026d3; background:rgba(255,255,255,0.85); backdrop-filter:blur(8px);
+      border:none; border-radius:40px;
+      padding:8px 18px; cursor:pointer;
+      box-shadow:0 3px 12px rgba(192,38,211,.3);
+      transition:transform .12s,box-shadow .12s;
+      display:flex; align-items:center; gap:5px;
+    }
+    #btn-back:active { transform:scale(0.95); }
+
+    /* Screen title */
+    .cs-title {
+      font-size: clamp(22px,6.5vw,42px); font-weight:900;
+      color:#fff;
+      text-shadow: 0 3px 18px rgba(168,85,247,.6), 0 1px 0 rgba(0,0,0,.08);
+      text-align:center; line-height:1.2;
+    }
+    .cs-subtitle {
+      font-size: clamp(13px,3.5vw,18px); font-weight:700;
+      color:rgba(255,255,255,.88);
+      background:rgba(255,255,255,.18); backdrop-filter:blur(6px);
+      border:1.5px solid rgba(255,255,255,.3);
+      padding:5px 18px; border-radius:40px;
+      text-align:center;
+    }
+
+    /* Cards grid */
+    #cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: clamp(10px,3vw,20px);
+      width: 100%;
+    }
+    @media (max-width: 420px) {
+      #cards-grid { grid-template-columns: 1fr; max-width: 240px; gap: 14px; }
+    }
+    @media (min-width: 421px) and (max-width: 600px) {
+      #cards-grid { grid-template-columns: repeat(3,1fr); gap: 10px; }
+    }
+
+    /* Individual card */
+    .char-card {
+      position: relative;
+      border-radius: 24px;
+      padding: clamp(10px,2.5vw,18px) clamp(6px,2vw,14px) clamp(12px,3vw,20px);
+      cursor: pointer;
+      display: flex; flex-direction:column;
+      align-items: center; gap: 8px;
+      transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+      box-shadow: 0 8px 24px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.5);
+      border: 2.5px solid rgba(255,255,255,.55);
+      overflow: hidden;
+      animation: cardIn .6s cubic-bezier(.34,1.4,.64,1) both;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .char-card:nth-child(1) { animation-delay: .1s; }
+    .char-card:nth-child(2) { animation-delay: .22s; }
+    .char-card:nth-child(3) { animation-delay: .34s; }
+
+    @keyframes cardIn {
+      0%  { opacity:0; transform:translateY(40px) scale(0.85); }
+      100%{ opacity:1; transform:translateY(0)  scale(1); }
+    }
+
+    .char-card:active,
+    .char-card.pressed { transform: scale(0.94) translateY(2px); }
+
+    .char-card.selected {
+      transform: scale(1.07) translateY(-6px);
+      box-shadow: 0 16px 40px rgba(0,0,0,.2), 0 0 0 4px rgba(255,255,255,.8);
+    }
+
+    /* Card backgrounds per character */
+    .card-princess { background: linear-gradient(145deg, #fce7f3 0%, #f9a8d4 45%, #ec4899 100%); }
+    .card-mermaid  { background: linear-gradient(145deg, #e0f2fe 0%, #67e8f9 45%, #06b6d4 100%); }
+    .card-fairy    { background: linear-gradient(145deg, #fef9c3 0%, #bef264 45%, #84cc16 100%); }
+
+    /* Shimmer on card */
+    .char-card::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(135deg,rgba(255,255,255,.35) 0%,rgba(255,255,255,0) 60%);
+      border-radius:inherit; pointer-events:none;
+    }
+
+    /* Sparkle badge on card */
+    .card-badge {
+      position:absolute; top:8px; left:8px;
+      font-size:clamp(12px,3vw,18px);
+      animation: badgeSpin 3s ease-in-out infinite;
+    }
+    @keyframes badgeSpin {
+      0%,100%{transform:rotate(-15deg) scale(1);}
+      50%{transform:rotate(15deg) scale(1.2);}
+    }
+
+    /* SVG silhouette wrapper */
+    .card-svg-wrap {
+      width: 100%;
+      display: flex; align-items:center; justify-content:center;
+      flex: 1;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,.18));
+    }
+
+    /* Card label */
+    .card-label {
+      font-size: clamp(13px,3.8vw,20px); font-weight:900;
+      color:#fff; text-align:center; line-height:1.2;
+      text-shadow: 0 2px 6px rgba(0,0,0,.25);
+      letter-spacing:.2px;
+    }
+    .card-label-en {
+      font-size: clamp(10px,2.5vw,13px); font-weight:700;
+      color:rgba(255,255,255,.75); text-align:center;
+    }
+
+    /* Tap hint strip */
+    .tap-hint {
+      font-size:clamp(12px,3vw,15px); font-weight:700;
+      color:rgba(255,255,255,.9);
+      background:rgba(255,255,255,.18); backdrop-filter:blur(6px);
+      border:1.5px solid rgba(255,255,255,.3);
+      padding:5px 16px; border-radius:40px;
+      animation: tapPulse 2s ease-in-out infinite 1s;
+    }
+    @keyframes tapPulse {
+      0%,100%{opacity:1;} 50%{opacity:.6;}
+    }
+
+    /* ══════════════════════════════════════════
+       SCREEN 3 — COLORING STUDIO (M3)
+    ══════════════════════════════════════════ */
+    #canvas-screen { overflow: hidden; }
+    #canvas-screen .dream-bg { z-index: -1; }
+
+    /* Back button for canvas screen (fixed, above all) */
+    .cs3-back-btn {
+      position: fixed;
+      top: clamp(10px,2.5vw,18px);
+      right: clamp(10px,2.5vw,18px);
+      z-index: 200;
+      font-family: 'Tajawal', sans-serif;
+      font-size: clamp(13px,3.5vw,17px);
+      font-weight: 800;
+      color: #c026d3;
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(8px);
+      border: none;
+      border-radius: 40px;
+      padding: 8px 18px;
+      cursor: pointer;
+      box-shadow: 0 3px 12px rgba(192,38,211,.3);
+      transition: transform .12s;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .cs3-back-btn:active { transform: scale(.95); }
+
+    /* Full-height flex column */
+    #cs3-layout {
+      position: relative; z-index: 10;
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center;
+    }
+
+    /* Title header strip */
+    #cs3-header {
+      flex-shrink: 0;
+      width: 100%;
+      display: flex; align-items: center; justify-content: center;
+      gap: 7px;
+      padding: clamp(44px,11vw,58px) 10px clamp(4px,1vw,8px);
+      font-size: clamp(18px,5vw,26px);
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 2px 14px rgba(168,85,247,.65);
+    }
+
+    /* Canvas wrapper — fills remaining height */
+    #cs3-canvas-area {
+      position: relative;
+      flex: 1 1 0;
+      min-height: 0;
+      width: calc(100% - 20px);
+      max-width: 500px;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,.22), 0 0 0 3px rgba(255,255,255,.45);
+      background: #fff;
+    }
+
+    #paint-canvas {
+      position: absolute; top:0; left:0;
+      width: 100%; height: 100%;
+      touch-action: none;
+      cursor: crosshair;
+      display: block;
+    }
+
+    /* Outline SVG overlay sits on top, no pointer events */
+    #cs3-outline-svg {
+      position: absolute; top:0; left:0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    #cs3-outline-svg svg {
+      width: 100%; height: 100%;
+    }
+
+    /* Bottom panel */
+    #cs3-bottom {
+      flex-shrink: 0;
+      width: calc(100% - 20px);
+      max-width: 500px;
+      padding: clamp(5px,1.5vw,9px) 0 clamp(8px,2.5vw,14px);
+      display: flex; flex-direction: column;
+      gap: clamp(5px,1.5vw,8px);
+    }
+
+    /* Color palette */
+    #cs3-palette {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: clamp(5px,1.5vw,8px);
+      overflow-x: auto;
+      padding: 4px 2px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    #cs3-palette::-webkit-scrollbar { display: none; }
+
+    .color-swatch {
+      width: clamp(30px,7.5vw,42px);
+      height: clamp(30px,7.5vw,42px);
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 3px solid rgba(255,255,255,.55);
+      cursor: pointer;
+      transition: transform .15s, border-color .15s, box-shadow .15s;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+      padding: 0;
+    }
+    .color-swatch:active { transform: scale(.86); }
+    .color-swatch.cs-active {
+      transform: scale(1.22);
+      border-color: #fff;
+      box-shadow: 0 0 0 3px #c026d3, 0 4px 12px rgba(0,0,0,.3);
+    }
+
+    /* Tool row */
+    #cs3-tool-row {
+      display: flex;
+      align-items: center;
+      gap: clamp(6px,2vw,12px);
+      justify-content: center;
+    }
+
+    .tool-btn {
+      font-family: 'Tajawal', sans-serif;
+      font-size: clamp(18px,5vw,26px);
+      background: rgba(255,255,255,.28);
+      backdrop-filter: blur(6px);
+      border: 2px solid rgba(255,255,255,.5);
+      border-radius: 14px;
+      padding: clamp(6px,1.5vw,10px) clamp(10px,3vw,18px);
+      cursor: pointer;
+      transition: transform .12s, background .12s;
+      color: #fff;
+      line-height: 1;
+    }
+    .tool-btn:active { transform: scale(.9); }
+    .tool-btn.tool-active {
+      background: rgba(255,255,255,.75);
+      border-color: #fff;
+      box-shadow: 0 0 0 3px #c026d3;
+    }
+
+    /* Brush size row */
+    .sz-row {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .sz-btn {
+      background: rgba(255,255,255,.32);
+      border: 2.5px solid rgba(255,255,255,.6);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform .12s, background .15s;
+      display: flex; align-items: center; justify-content: center;
+      color: #4c1d95;
+      flex-shrink: 0;
+      padding: 0;
+      line-height: 1;
+    }
+    .sz-btn:active { transform: scale(.86); }
+    .sz-btn.sz-active {
+      background: rgba(255,255,255,.8);
+      border-color: #fff;
+      box-shadow: 0 0 0 3px #c026d3;
+    }
+    .sz-btn[data-size="6"]  { width:26px; height:26px; font-size:9px; }
+    .sz-btn[data-size="13"] { width:33px; height:33px; font-size:13px; }
+    .sz-btn[data-size="24"] { width:40px; height:40px; font-size:17px; }
+
+    /* Next / accessories button */
+    #cs3-next-btn {
+      font-family: 'Tajawal', sans-serif;
+      font-size: clamp(16px,4.5vw,22px);
+      font-weight: 900;
+      color: #c026d3;
+      background: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: clamp(10px,2.5vw,14px) clamp(24px,8vw,50px);
+      cursor: pointer;
+      box-shadow: 0 5px 0 #d946ef, 0 8px 24px rgba(192,38,211,.4);
+      transition: transform .12s, box-shadow .12s;
+      width: 100%;
+      letter-spacing: .2px;
+    }
+    #cs3-next-btn:active {
+      transform: scale(.97) translateY(3px);
+      box-shadow: 0 2px 0 #d946ef, 0 4px 12px rgba(192,38,211,.3);
+    }
+
+    /* Coming soon toast */
+    #cs3-toast {
+      position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+      background: rgba(255,255,255,.92); backdrop-filter: blur(10px);
+      color: #c026d3; font-weight: 900;
+      font-size: clamp(14px,4vw,18px);
+      border-radius: 50px; padding: 10px 28px;
+      box-shadow: 0 4px 20px rgba(192,38,211,.35);
+      pointer-events: none; z-index: 9990;
+      opacity: 0; transition: opacity .3s;
+    }
+    #cs3-toast.show { opacity: 1; }
+
+    /* ══════════════════════════════════════════
+       SCREEN 4 — DRESS-UP STUDIO (M4)
+    ══════════════════════════════════════════ */
+    #dress-screen { overflow: hidden; }
+    #dress-screen .dream-bg { z-index: -1; }
+
+    #ds-layout {
+      position: relative; z-index: 10;
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center;
+    }
+
+    #ds-header {
+      flex-shrink: 0;
+      width: 100%;
+      display: flex; align-items: center; justify-content: center;
+      gap: 7px;
+      padding: clamp(44px,11vw,58px) 10px clamp(4px,1vw,8px);
+      font-size: clamp(18px,5vw,26px);
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 2px 14px rgba(168,85,247,.65);
+    }
+
+    /* Stage: shows painted artwork + stickers */
+    #ds-stage {
+      position: relative;
+      flex: 1 1 0;
+      min-height: 0;
+      width: calc(100% - 20px);
+      max-width: 500px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 8px 32px rgba(0,0,0,.22), 0 0 0 3px rgba(255,255,255,.45);
+    }
+
+    #ds-painted-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: fill;
+      display: block;
+    }
+
+    #ds-outline-overlay {
+      position: absolute; inset: 0;
+      pointer-events: none;
+    }
+    #ds-outline-overlay svg {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+    }
+
+    #ds-stickers-layer {
+      position: absolute; inset: 0;
+    }
+
+    /* Placed sticker on stage */
+    .sticker-on-stage {
+      position: absolute;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      filter: drop-shadow(0 3px 8px rgba(0,0,0,.22));
+    }
+    .sticker-on-stage:active { cursor: grabbing; }
+    .sticker-on-stage.ds-selected {
+      filter: drop-shadow(0 0 7px rgba(192,38,211,.9)) drop-shadow(0 3px 8px rgba(0,0,0,.22));
+    }
+    .sticker-on-stage svg { display: block; width: 100%; height: 100%; }
+
+    /* Delete button shown when sticker is selected */
+    .sticker-del {
+      display: none;
+      position: absolute;
+      top: -10px; right: -10px;
+      width: 24px; height: 24px;
+      background: #ff3366;
+      border: 2.5px solid #fff;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      align-items: center; justify-content: center;
+      cursor: pointer;
+      z-index: 20;
+      line-height: 1;
+      box-shadow: 0 2px 6px rgba(0,0,0,.3);
+    }
+    .sticker-on-stage.ds-selected .sticker-del { display: flex; }
+
+    /* Bottom panel */
+    #ds-bottom {
+      flex-shrink: 0;
+      width: calc(100% - 20px);
+      max-width: 500px;
+      padding: clamp(5px,1.5vw,8px) 0 clamp(8px,2.5vw,13px);
+      display: flex; flex-direction: column;
+      gap: 6px;
+    }
+
+    /* Category tabs */
+    #ds-cat-tabs {
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 2px 2px;
+    }
+    #ds-cat-tabs::-webkit-scrollbar { display: none; }
+
+    .ds-cat-tab {
+      flex-shrink: 0;
+      font-family: 'Tajawal', sans-serif;
+      font-size: clamp(11px,3vw,14px);
+      font-weight: 800;
+      color: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.18);
+      backdrop-filter: blur(6px);
+      border: 2px solid rgba(255,255,255,.3);
+      border-radius: 30px;
+      padding: 5px 11px;
+      cursor: pointer;
+      transition: background .15s, color .15s, border-color .15s, box-shadow .15s;
+      white-space: nowrap;
+    }
+    .ds-cat-tab:active { transform: scale(.93); }
+    .ds-cat-tab.ds-tab-active {
+      background: rgba(255,255,255,.92);
+      color: #c026d3;
+      border-color: #fff;
+      box-shadow: 0 3px 12px rgba(192,38,211,.3);
+    }
+
+    /* Sticker scroll row */
+    #ds-sticker-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 4px 3px 6px;
+      scrollbar-width: none;
+      min-height: 68px;
+    }
+    #ds-sticker-scroll::-webkit-scrollbar { display: none; }
+
+    .ds-sticker-btn {
+      flex-shrink: 0;
+      width: 58px; height: 58px;
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(6px);
+      border: 2.5px solid rgba(255,255,255,.65);
+      border-radius: 14px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      padding: 6px;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 3px 10px rgba(0,0,0,.12);
+    }
+    .ds-sticker-btn:active { transform: scale(.85); box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+    .ds-sticker-btn svg { width: 100%; height: 100%; }
+
+    /* Hint */
+    .ds-hint {
+      font-size: clamp(11px,2.8vw,13px);
+      font-weight: 700;
+      color: rgba(255,255,255,.82);
+      text-align: center;
+    }
+
+    /* Finish button */
+    #ds-finish-btn {
+      font-family: 'Tajawal', sans-serif;
+      font-size: clamp(16px,4.5vw,22px);
+      font-weight: 900;
+      color: #c026d3;
+      background: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: clamp(10px,2.5vw,14px) clamp(24px,8vw,50px);
+      cursor: pointer;
+      box-shadow: 0 5px 0 #d946ef, 0 8px 24px rgba(192,38,211,.4);
+      transition: transform .12s, box-shadow .12s;
+      width: 100%;
+      letter-spacing: .2px;
+    }
+    #ds-finish-btn:active {
+      transform: scale(.97) translateY(3px);
+      box-shadow: 0 2px 0 #d946ef, 0 4px 12px rgba(192,38,211,.3);
+    }
+
+    /* ══════════════════════════════════════════
+       SCREEN 5 — SHOWCASE & GALLERY (M5)
+    ══════════════════════════════════════════ */
+    #showcase-screen { overflow: hidden; }
+    #showcase-screen .dream-bg { z-index: -1; }
+
+    /* ── Confetti particle ── */
+    .confetti-piece {
+      position: fixed;
+      top: -20px;
+      width: 10px; height: 14px;
+      border-radius: 3px;
+      pointer-events: none;
+      z-index: 9998;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      0%   { transform: translateY(0) rotate(0deg) scaleX(1); opacity: 1; }
+      80%  { opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg) scaleX(-1); opacity: 0; }
+    }
+
+    /* ── Showcase layout ── */
+    #sc-layout {
+      position: relative; z-index: 10;
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #sc-header {
+      flex-shrink: 0;
+      padding: clamp(44px,11vw,58px) 10px clamp(2px,1vw,6px);
+      font-size: clamp(20px,5.5vw,28px);
+      font-weight: 900; color: #fff;
+      text-shadow: 0 2px 14px rgba(168,85,247,.65);
+      text-align: center; line-height: 1.3;
+      animation: titlePop 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    /* ── Final artwork frame ── */
+    #sc-artwork-wrap {
+      flex-shrink: 0;
+      position: relative;
+      width: calc(100% - 28px);
+      max-width: 360px;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,.28), 0 0 0 4px rgba(255,255,255,.55);
+      background: #fff;
+      animation: scFramePop 0.7s cubic-bezier(0.34,1.4,0.64,1) 0.15s both;
+    }
+    @keyframes scFramePop {
+      0%   { transform: scale(0.5) rotate(-6deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    #sc-artwork-wrap::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 5;
+      border-radius: inherit;
+      border: 4px solid rgba(255,255,255,.7);
+      pointer-events: none;
+    }
+
+    /* Decorative corner stars on frame */
+    .sc-frame-star {
+      position: absolute; z-index: 6;
+      font-size: 20px; pointer-events: none;
+      animation: cornerPulse 2.5s ease-in-out infinite;
+    }
+    .sc-frame-star:nth-child(1) { top:-10px; right:-8px; }
+    .sc-frame-star:nth-child(2) { top:-10px; left:-8px;  animation-delay:.6s; }
+    .sc-frame-star:nth-child(3) { bottom:-10px; right:-8px; animation-delay:1.2s; }
+    .sc-frame-star:nth-child(4) { bottom:-10px; left:-8px;  animation-delay:1.8s; }
+
+    #sc-final-canvas {
+      display: block;
+      width: 100%; height: auto;
+    }
+
+    /* ── Name ribbon ── */
+    #sc-name-ribbon {
+      flex-shrink: 0;
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.22); backdrop-filter: blur(8px);
+      border: 1.5px solid rgba(255,255,255,.4);
+      border-radius: 50px;
+      padding: 6px 20px;
+      font-size: clamp(14px,3.8vw,19px);
+      font-weight: 900; color: #fff;
+      margin-top: 8px;
+      animation: fadeSlideUp 0.6s ease both 0.4s;
+    }
+
+    /* ── Action buttons row ── */
+    #sc-actions {
+      flex-shrink: 0;
+      display: flex; flex-direction: column;
+      gap: 10px;
+      width: calc(100% - 28px); max-width: 360px;
+      margin-top: 10px;
+      animation: fadeSlideUp 0.6s ease both 0.55s;
+    }
+
+    .sc-btn-primary {
+      font-family: 'Tajawal', sans-serif;
+      font-size: clamp(16px,4.5vw,20px);
+      font-weight: 900; color: #c026d3;
+      background: #fff; border: none;
+      border-radius: 50px;
+      padding: clamp(11px,2.8vw,15px) 20px;
+      cursor: pointer;
+      box-shadow: 0 5px 0 #d946ef, 0 8px 24px rgba(192,38,211,.4);
+      transition: transform .12s, box-shadow .12s;
+      width: 100%; letter-spacing: .2px;
+    }
+    .sc-btn-primary:active {
+      transform: scale(.97) translateY(3px);
+      box-shadow: 0 2px 0 #d946ef, 0 4px 12px rgba(192,38,211,.3);
+    }
+
+    .sc-btn-secondary {
+      font-family: 'Tajawal', sans-serif;
+      font-size: clamp(14px,3.8vw,17px);
+      font-weight: 800;
+      color: rgba(255,255,255,.95);
+      background: rgba(255,255,255,.2); backdrop-filter: blur(8px);
+      border: 2px solid rgba(255,255,255,.45);
+      border-radius: 50px;
+      padding: clamp(9px,2.2vw,12px) 20px;
+      cursor: pointer;
+      transition: background .15s, transform .12s;
+      width: 100%; letter-spacing: .2px;
+    }
+    .sc-btn-secondary:active { transform: scale(.97); background: rgba(255,255,255,.3); }
+
+    /* ── Gallery section ── */
+    #sc-gallery-section {
+      flex-shrink: 0;
+      width: calc(100% - 28px); max-width: 360px;
+      margin-top: 14px;
+      margin-bottom: clamp(20px,5vw,36px);
+      animation: fadeSlideUp 0.6s ease both 0.7s;
+    }
+
+    #sc-gallery-title {
+      font-size: clamp(15px,4vw,19px);
+      font-weight: 900; color: #fff;
+      text-shadow: 0 2px 8px rgba(168,85,247,.5);
+      margin-bottom: 10px; text-align: center;
+    }
+
+    #sc-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .gallery-thumb {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      aspect-ratio: 1;
+      background: rgba(255,255,255,.15);
+      box-shadow: 0 4px 14px rgba(0,0,0,.18), 0 0 0 2px rgba(255,255,255,.35);
+      cursor: pointer;
+      transition: transform .2s cubic-bezier(.34,1.56,.64,1);
+      animation: cardIn .5s cubic-bezier(.34,1.4,.64,1) both;
+    }
+    .gallery-thumb:active { transform: scale(.9); }
+    .gallery-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .gallery-thumb .thumb-del {
+      display: none;
+      position: absolute; top: 4px; right: 4px;
+      width: 22px; height: 22px;
+      background: #ff3366; border: 2px solid #fff;
+      border-radius: 50%; color: #fff;
+      font-size: 12px; font-weight: 900;
+      align-items: center; justify-content: center;
+      cursor: pointer; z-index: 10;
+    }
+    .gallery-thumb:hover .thumb-del,
+    .gallery-thumb.thumb-selected .thumb-del { display: flex; }
+
+    .gallery-empty {
+      grid-column: 1/-1;
+      text-align: center;
+      font-size: clamp(13px,3.5vw,16px);
+      font-weight: 700;
+      color: rgba(255,255,255,.75);
+      padding: 20px 0;
+    }
+
+    /* ── PWA install banner ── */
+    #pwa-banner {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 10000;
+      background: rgba(255,255,255,.97);
+      backdrop-filter: blur(12px);
+      border-top: 2px solid rgba(192,38,211,.25);
+      padding: 12px 18px 18px;
+      display: flex; align-items: center; gap: 12px;
+      transform: translateY(110%);
+      transition: transform .5s cubic-bezier(.34,1.2,.64,1);
+      box-shadow: 0 -4px 24px rgba(0,0,0,.14);
+    }
+    #pwa-banner.pwa-visible { transform: translateY(0); }
+    #pwa-banner-icon { font-size: 38px; flex-shrink: 0; }
+    #pwa-banner-text { flex: 1; }
+    #pwa-banner-text strong {
+      display: block; font-size: 15px; font-weight: 900;
+      color: #c026d3; margin-bottom: 2px;
+    }
+    #pwa-banner-text span { font-size: 12px; color: #6b21a8; font-weight: 700; }
+    #pwa-banner-btns { display: flex; gap: 7px; flex-shrink: 0; }
+    .pwa-btn-install {
+      font-family: 'Tajawal', sans-serif;
+      font-size: 13px; font-weight: 900;
+      background: #c026d3; color: #fff;
+      border: none; border-radius: 30px;
+      padding: 8px 16px; cursor: pointer;
+      box-shadow: 0 3px 0 #9d119a;
+      transition: transform .12s;
+    }
+    .pwa-btn-install:active { transform: scale(.95); }
+    .pwa-btn-dismiss {
+      font-family: 'Tajawal', sans-serif;
+      font-size: 13px; font-weight: 800;
+      background: rgba(192,38,211,.1); color: #c026d3;
+      border: 1.5px solid rgba(192,38,211,.3);
+      border-radius: 30px;
+      padding: 8px 12px; cursor: pointer;
+      transition: background .12s;
+    }
+    .pwa-btn-dismiss:active { background: rgba(192,38,211,.2); }
+
+    /* iOS hint */
+    #pwa-ios-hint {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 10000;
+      background: rgba(255,255,255,.97); backdrop-filter: blur(12px);
+      border-top: 2px solid rgba(192,38,211,.2);
+      padding: 14px 18px 22px; text-align: center;
+      transform: translateY(110%);
+      transition: transform .5s cubic-bezier(.34,1.2,.64,1);
+      box-shadow: 0 -4px 24px rgba(0,0,0,.12);
+    }
+    #pwa-ios-hint.pwa-visible { transform: translateY(0); }
+    #pwa-ios-hint p {
+      font-size: 14px; font-weight: 800; color: #6b21a8; margin-bottom: 6px;
+    }
+    #pwa-ios-hint .ios-steps {
+      font-size: 13px; color: #9333ea; font-weight: 700; line-height: 1.7;
+    }
+    #pwa-ios-close {
+      margin-top: 10px; font-family: 'Tajawal', sans-serif;
+      font-size: 13px; font-weight: 900;
+      background: #c026d3; color: #fff;
+      border: none; border-radius: 30px;
+      padding: 7px 22px; cursor: pointer;
+    }
+
+    /* ── Success toast ── */
+    #sc-toast {
+      position: fixed; bottom: 80px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(255,255,255,.95); backdrop-filter: blur(10px);
+      color: #c026d3; font-weight: 900;
+      font-size: clamp(13px,3.5vw,16px);
+      border-radius: 50px; padding: 10px 24px;
+      box-shadow: 0 4px 20px rgba(192,38,211,.3);
+      pointer-events: none; z-index: 9990;
+      opacity: 0;
+      transition: opacity .35s, transform .35s;
+    }
+    #sc-toast.sc-toast-show {
+      opacity: 1; transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--               SCREEN 1 — WELCOME                  -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="welcome-screen" class="screen dream-bg">
+
+  <!-- Noise overlay -->
+  <div style="position:absolute;inset:0;pointer-events:none;z-index:0;
+    background-image:url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.04%22/%3E%3C/svg%3E');"></div>
+
+  <!-- Corner Decorations -->
+  <span class="corner-deco">🌸</span>
+  <span class="corner-deco">✨</span>
+  <span class="corner-deco">🎀</span>
+  <span class="corner-deco">💎</span>
+
+  <!-- Stars -->
+  <div class="stars-layer" id="stars-welcome"></div>
+
+  <!-- Clouds -->
+  <div class="cloud" style="width:180px;height:55px;top:12%;left:5%;animation-duration:18s;"></div>
+  <div class="cloud" style="width:120px;height:38px;top:20%;right:8%;animation-duration:22s;animation-delay:-5s;"></div>
+  <div class="cloud" style="width:150px;height:45px;bottom:18%;left:3%;animation-duration:20s;animation-delay:-9s;"></div>
+  <div class="cloud" style="width:90px;height:30px;bottom:25%;right:5%;animation-duration:16s;animation-delay:-3s;"></div>
+
+  <!-- Content -->
+  <div id="welcome-content">
+
+    <!-- Doll SVG -->
+    <div id="doll-wrapper">
+      <svg viewBox="0 0 160 220" style="width:clamp(95px,26vw,145px);height:auto" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,42 60,22 70,38 80,18 90,38 100,22 110,42" fill="#FFD700" stroke="#FFA500" stroke-width="2"/>
+        <circle cx="80" cy="22" r="5" fill="#ff6eb4"/>
+        <circle cx="60" cy="28" r="4" fill="#a78bfa"/>
+        <circle cx="100" cy="28" r="4" fill="#a78bfa"/>
+        <circle cx="80" cy="65" r="28" fill="#FDDBB4" stroke="#f9a8d4" stroke-width="2.5"/>
+        <ellipse cx="80" cy="42" rx="28" ry="14" fill="#a855f7"/>
+        <path d="M52 60 Q40 80 44 105" stroke="#a855f7" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <path d="M108 60 Q120 80 116 105" stroke="#a855f7" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <ellipse cx="69" cy="62" rx="5.5" ry="6" fill="#3b1f7a"/>
+        <ellipse cx="91" cy="62" rx="5.5" ry="6" fill="#3b1f7a"/>
+        <circle cx="71" cy="60" r="2" fill="white"/>
+        <circle cx="93" cy="60" r="2" fill="white"/>
+        <line x1="64" y1="57" x2="61" y2="53" stroke="#3b1f7a" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="67" y1="56" x2="65" y2="51" stroke="#3b1f7a" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="95" y1="56" x2="93" y2="51" stroke="#3b1f7a" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="98" y1="57" x2="101" y2="53" stroke="#3b1f7a" stroke-width="1.5" stroke-linecap="round"/>
+        <ellipse cx="63" cy="72" rx="7" ry="5" fill="#ffaec0" opacity="0.55"/>
+        <ellipse cx="97" cy="72" rx="7" ry="5" fill="#ffaec0" opacity="0.55"/>
+        <path d="M70 78 Q80 88 90 78" stroke="#e0607e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <rect x="73" y="90" width="14" height="14" rx="4" fill="#FDDBB4"/>
+        <path d="M40 135 Q50 100 80 100 Q110 100 120 135 L122 185 Q80 195 38 185 Z" fill="#ec4899" stroke="#db2777" stroke-width="1.5"/>
+        <circle cx="70" cy="130" r="3" fill="rgba(255,255,255,0.6)"/>
+        <circle cx="90" cy="145" r="2.5" fill="rgba(255,255,255,0.5)"/>
+        <circle cx="80" cy="115" r="2" fill="rgba(255,255,255,0.7)"/>
+        <circle cx="60" cy="155" r="2" fill="rgba(255,255,255,0.4)"/>
+        <circle cx="105" cy="160" r="3" fill="rgba(255,255,255,0.4)"/>
+        <path d="M65 108 Q80 118 95 108" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M72 108 L65 100 L78 107" fill="#f9a8d4"/>
+        <path d="M88 108 L95 100 L82 107" fill="#f9a8d4"/>
+        <circle cx="80" cy="108" r="4" fill="white"/>
+        <path d="M40 130 Q26 148 32 165" stroke="#FDDBB4" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <path d="M120 130 Q134 148 128 165" stroke="#FDDBB4" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <circle cx="32" cy="167" r="7" fill="#FDDBB4"/>
+        <circle cx="128" cy="167" r="7" fill="#FDDBB4"/>
+        <path d="M38 185 Q50 200 62 185 Q74 200 86 185 Q98 200 110 185 Q116 195 122 185" stroke="#f472b6" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <line x1="128" y1="167" x2="145" y2="150" stroke="#FFD700" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="145,140 149,150 139,150" fill="#FFD700" stroke="#FFA500" stroke-width="1"/>
+        <circle cx="145" cy="144" r="4" fill="white" opacity="0.8"/>
+      </svg>
+    </div>
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <h1 id="title-main">🎨 استوديو الأحلام 🌟</h1>
+      <span id="title-sub">مصممة العرائس الصغيرة</span>
+    </div>
+
+    <div class="sparkle-row" aria-hidden="true">
+      <span class="sparkle-icon">⭐</span>
+      <span class="sparkle-icon">💖</span>
+      <span class="sparkle-icon">✨</span>
+      <span class="sparkle-icon">💖</span>
+      <span class="sparkle-icon">⭐</span>
+    </div>
+
+    <button id="btn-start" aria-label="ابدئي اللعب">🎀 ابدئي اللعب 🎀</button>
+
+    <p id="footer-badge"><span>🎠</span><span>صمّمي عروستك المميزة!</span><span>🎠</span></p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--           SCREEN 2 — CHARACTER SELECT             -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="char-screen" class="screen dream-bg hidden">
+
+  <!-- Stars -->
+  <div class="stars-layer" id="stars-char"></div>
+
+  <!-- Clouds -->
+  <div class="cloud" style="width:160px;height:50px;top:8%;right:4%;animation-duration:19s;"></div>
+  <div class="cloud" style="width:110px;height:34px;top:18%;left:6%;animation-duration:24s;animation-delay:-6s;"></div>
+  <div class="cloud" style="width:130px;height:40px;bottom:14%;right:3%;animation-duration:21s;animation-delay:-4s;"></div>
+
+  <!-- Back Button -->
+  <button id="btn-back" onclick="goToWelcome()">
+    <span style="font-size:1.1em;">←</span> رجوع
+  </button>
+
+  <!-- Content -->
+  <div id="char-content">
+
+    <!-- Title -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:clamp(30px,8vw,50px);">
+      <h2 class="cs-title">👑 اختاري عروستك 👑</h2>
+      <p class="cs-subtitle">اضغطي على الشخصية التي تحبينها ✨</p>
+    </div>
+
+    <!-- Cards -->
+    <div id="cards-grid">
+
+      <!-- ── Card 1: Princess ── -->
+      <div class="char-card card-princess" data-char="princess" role="button" tabindex="0" aria-label="أميرة">
+        <span class="card-badge">👑</span>
+        <div class="card-svg-wrap">
+          <svg viewBox="0 0 120 200" style="width:100%;max-width:110px;height:auto" xmlns="http://www.w3.org/2000/svg">
+            <!-- Crown -->
+            <polygon points="36,38 44,18 54,32 60,12 66,32 76,18 84,38" fill="none" stroke="white" stroke-width="2.5" stroke-linejoin="round"/>
+            <circle cx="60" cy="14" r="4" fill="white" opacity=".8"/>
+            <circle cx="44" cy="24" r="3" fill="white" opacity=".6"/>
+            <circle cx="76" cy="24" r="3" fill="white" opacity=".6"/>
+            <!-- Head -->
+            <circle cx="60" cy="58" r="22" fill="none" stroke="white" stroke-width="2.5"/>
+            <!-- Hair long -->
+            <path d="M38 52 Q25 75 28 110 Q32 130 36 140" stroke="white" stroke-width="8" fill="none" stroke-linecap="round" opacity=".75"/>
+            <path d="M82 52 Q95 75 92 110 Q88 130 84 140" stroke="white" stroke-width="8" fill="none" stroke-linecap="round" opacity=".75"/>
+            <ellipse cx="60" cy="38" rx="22" ry="12" fill="none" stroke="white" stroke-width="2" opacity=".7"/>
+            <!-- Eyes -->
+            <ellipse cx="52" cy="56" rx="4" ry="4.5" fill="white" opacity=".9"/>
+            <ellipse cx="68" cy="56" rx="4" ry="4.5" fill="white" opacity=".9"/>
+            <!-- Lashes -->
+            <line x1="48.5" y1="52.5" x2="46" y2="49" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+            <line x1="51" y1="51.5" x2="49.5" y2="47.5" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+            <line x1="69" y1="51.5" x2="67.5" y2="47.5" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+            <line x1="71.5" y1="52.5" x2="74" y2="49" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+            <!-- Smile -->
+            <path d="M53 65 Q60 72 67 65" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity=".9"/>
+            <!-- Cheeks -->
+            <ellipse cx="46" cy="62" rx="5.5" ry="4" fill="white" opacity=".25"/>
+            <ellipse cx="74" cy="62" rx="5.5" ry="4" fill="white" opacity=".25"/>
+            <!-- Neck -->
+            <rect x="55" y="78" width="10" height="10" rx="3" fill="none" stroke="white" stroke-width="2"/>
+            <!-- Ball gown -->
+            <path d="M28 125 Q35 88 60 86 Q85 88 92 125 L100 188 Q60 198 20 188 Z" fill="none" stroke="white" stroke-width="2.5"/>
+            <!-- Gown details -->
+            <path d="M38 105 Q60 115 82 105" stroke="white" stroke-width="1.5" fill="none" opacity=".6"/>
+            <path d="M32 125 Q60 138 88 125" stroke="white" stroke-width="1.5" fill="none" opacity=".5"/>
+            <path d="M26 148 Q60 162 94 148" stroke="white" stroke-width="1.5" fill="none" opacity=".4"/>
+            <!-- Sparkles on gown -->
+            <text x="52" y="108" font-size="7" fill="white" opacity=".8">✦</text>
+            <text x="65" y="128" font-size="6" fill="white" opacity=".7">✦</text>
+            <text x="44" y="145" font-size="5" fill="white" opacity=".6">✦</text>
+            <text x="72" y="150" font-size="7" fill="white" opacity=".7">✦</text>
+            <!-- Arms -->
+            <path d="M28 120 Q16 138 20 155" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" opacity=".8"/>
+            <path d="M92 120 Q104 138 100 155" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" opacity=".8"/>
+            <!-- Frill bottom -->
+            <path d="M20 188 Q30 200 42 188 Q54 200 66 188 Q78 200 90 188 Q96 197 100 188" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".75"/>
+            <!-- Bow at waist -->
+            <path d="M50 92 L44 84 L56 90" fill="white" opacity=".7"/>
+            <path d="M70 92 L76 84 L64 90" fill="white" opacity=".7"/>
+            <circle cx="60" cy="92" r="3.5" fill="white" opacity=".85"/>
+          </svg>
+        </div>
+        <p class="card-label">أميرة</p>
+        <p class="card-label-en">Princess</p>
+      </div>
+
+      <!-- ── Card 2: Mermaid ── -->
+      <div class="char-card card-mermaid" data-char="mermaid" role="button" tabindex="0" aria-label="حورية بحر">
+        <span class="card-badge">🌊</span>
+        <div class="card-svg-wrap">
+          <svg viewBox="0 0 120 210" style="width:100%;max-width:110px;height:auto" xmlns="http://www.w3.org/2000/svg">
+            <!-- Head -->
+            <circle cx="60" cy="48" r="22" fill="none" stroke="white" stroke-width="2.5"/>
+            <!-- Long flowing hair -->
+            <path d="M38 42 Q20 65 22 100 Q24 125 30 145 Q40 165 38 180" stroke="white" stroke-width="9" fill="none" stroke-linecap="round" opacity=".7"/>
+            <path d="M82 42 Q100 65 98 100 Q96 125 90 145" stroke="white" stroke-width="9" fill="none" stroke-linecap="round" opacity=".7"/>
+            <path d="M48 70 Q38 90 40 120 Q42 145 38 165" stroke="white" stroke-width="5" fill="none" stroke-linecap="round" opacity=".4"/>
+            <!-- Hair top -->
+            <ellipse cx="60" cy="28" rx="22" ry="10" fill="none" stroke="white" stroke-width="2" opacity=".65"/>
+            <!-- Starfish in hair -->
+            <text x="72" y="26" font-size="10" fill="white" opacity=".9">✦</text>
+            <!-- Eyes -->
+            <ellipse cx="52" cy="46" rx="4" ry="4.5" fill="white" opacity=".9"/>
+            <ellipse cx="68" cy="46" rx="4" ry="4.5" fill="white" opacity=".9"/>
+            <line x1="48.5" y1="42.5" x2="46" y2="39" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+            <line x1="51" y1="41.5" x2="49.5" y2="37.5" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+            <line x1="69" y1="41.5" x2="67.5" y2="37.5" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+            <line x1="71.5" y1="42.5" x2="74" y2="39" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+            <path d="M53 55 Q60 62 67 55" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity=".9"/>
+            <ellipse cx="46" cy="52" rx="5" ry="3.5" fill="white" opacity=".2"/>
+            <ellipse cx="74" cy="52" rx="5" ry="3.5" fill="white" opacity=".2"/>
+            <!-- Neck -->
+            <rect x="55" y="68" width="10" height="9" rx="3" fill="none" stroke="white" stroke-width="2"/>
+            <!-- Torso (top/shell bra implied) -->
+            <path d="M38 88 Q42 76 60 74 Q78 76 82 88 L84 115 Q60 122 36 115 Z" fill="none" stroke="white" stroke-width="2.5"/>
+            <!-- Scale detail on torso -->
+            <path d="M42 95 Q60 102 78 95" stroke="white" stroke-width="1.2" fill="none" opacity=".5"/>
+            <path d="M40 105 Q60 113 80 105" stroke="white" stroke-width="1.2" fill="none" opacity=".4"/>
+            <!-- Shell/bra decoration -->
+            <path d="M50 80 Q60 87 70 80" stroke="white" stroke-width="1.8" fill="none" opacity=".7"/>
+            <!-- Arms -->
+            <path d="M38 92 Q22 108 26 128" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" opacity=".8"/>
+            <path d="M82 92 Q98 108 94 128" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" opacity=".8"/>
+            <!-- Mermaid tail -->
+            <path d="M36 115 Q32 145 36 168 Q48 195 60 200 Q72 195 84 168 Q88 145 84 115 Q60 125 36 115 Z" fill="none" stroke="white" stroke-width="2.5"/>
+            <!-- Scales on tail -->
+            <path d="M40 130 Q60 138 80 130" stroke="white" stroke-width="1.2" fill="none" opacity=".5"/>
+            <path d="M38 145 Q60 154 82 145" stroke="white" stroke-width="1.2" fill="none" opacity=".45"/>
+            <path d="M39 160 Q60 170 81 160" stroke="white" stroke-width="1.2" fill="none" opacity=".4"/>
+            <!-- Fin -->
+            <path d="M44 195 Q30 210 20 205 Q35 185 44 195" fill="none" stroke="white" stroke-width="2" opacity=".8"/>
+            <path d="M76 195 Q90 210 100 205 Q85 185 76 195" fill="none" stroke="white" stroke-width="2" opacity=".8"/>
+            <!-- Bubbles -->
+            <circle cx="104" cy="60" r="5" fill="none" stroke="white" stroke-width="1.5" opacity=".5"/>
+            <circle cx="110" cy="44" r="3.5" fill="none" stroke="white" stroke-width="1.5" opacity=".4"/>
+            <circle cx="14" cy="80" r="4" fill="none" stroke="white" stroke-width="1.5" opacity=".4"/>
+            <!-- Stars/sparkles -->
+            <text x="100" y="90" font-size="8" fill="white" opacity=".7">✦</text>
+            <text x="10" y="55" font-size="7" fill="white" opacity=".6">✦</text>
+          </svg>
+        </div>
+        <p class="card-label">حورية بحر</p>
+        <p class="card-label-en">Mermaid</p>
+      </div>
+
+      <!-- ── Card 3: Fairy ── -->
+      <div class="char-card card-fairy" data-char="fairy" role="button" tabindex="0" aria-label="جنية سحرية">
+        <span class="card-badge">🧚</span>
+        <div class="card-svg-wrap">
+          <svg viewBox="0 0 140 210" style="width:100%;max-width:110px;height:auto" xmlns="http://www.w3.org/2000/svg">
+            <!-- Wings (behind character) -->
+            <!-- Left wing -->
+            <path d="M36 95 Q5 60 10 30 Q20 15 42 40 Q50 55 44 80" fill="none" stroke="white" stroke-width="2" opacity=".7"/>
+            <path d="M36 95 Q2 90 5 110 Q12 130 40 115" fill="none" stroke="white" stroke-width="2" opacity=".6"/>
+            <!-- Wing veins left -->
+            <path d="M36 95 Q22 55 26 35" stroke="white" stroke-width="1" fill="none" opacity=".4"/>
+            <path d="M36 95 Q14 100 16 115" stroke="white" stroke-width="1" fill="none" opacity=".35"/>
+            <!-- Right wing -->
+            <path d="M104 95 Q135 60 130 30 Q120 15 98 40 Q90 55 96 80" fill="none" stroke="white" stroke-width="2" opacity=".7"/>
+            <path d="M104 95 Q138 90 135 110 Q128 130 100 115" fill="none" stroke="white" stroke-width="2" opacity=".6"/>
+            <!-- Wing veins right -->
+            <path d="M104 95 Q118 55 114 35" stroke="white" stroke-width="1" fill="none" opacity=".4"/>
+            <path d="M104 95 Q126 100 124 115" stroke="white" stroke-width="1" fill="none" opacity=".35"/>
+            <!-- Wing sparkles -->
+            <text x="14" y="48" font-size="7" fill="white" opacity=".75">✦</text>
+            <text x="118" y="48" font-size="7" fill="white" opacity=".75">✦</text>
+            <text x="8" y="108" font-size="6" fill="white" opacity=".6">✦</text>
+            <text x="124" y="108" font-size="6" fill="white" opacity=".6">✦</text>
+
+            <!-- Head -->
+            <circle cx="70" cy="55" r="22" fill="none" stroke="white" stroke-width="2.5"/>
+            <!-- Short curly hair -->
+            <ellipse cx="70" cy="35" rx="22" ry="12" fill="none" stroke="white" stroke-width="2.5" opacity=".8"/>
+            <path d="M48 48 Q36 62 38 80" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" opacity=".65"/>
+            <path d="M92 48 Q104 62 102 80" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" opacity=".65"/>
+            <!-- Flower in hair -->
+            <circle cx="86" cy="33" r="5" fill="none" stroke="white" stroke-width="1.8" opacity=".85"/>
+            <circle cx="86" cy="33" r="2" fill="white" opacity=".6"/>
+            <!-- Eyes -->
+            <ellipse cx="62" cy="53" rx="4" ry="4.5" fill="white" opacity=".9"/>
+            <ellipse cx="78" cy="53" rx="4" ry="4.5" fill="white" opacity=".9"/>
+            <line x1="58.5" y1="49.5" x2="56" y2="46" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+            <line x1="61" y1="48.5" x2="59.5" y2="44.5" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+            <line x1="79" y1="48.5" x2="77.5" y2="44.5" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+            <line x1="81.5" y1="49.5" x2="84" y2="46" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+            <path d="M63 62 Q70 69 77 62" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity=".9"/>
+            <ellipse cx="56" cy="59" rx="5" ry="3.5" fill="white" opacity=".2"/>
+            <ellipse cx="84" cy="59" rx="5" ry="3.5" fill="white" opacity=".2"/>
+            <!-- Neck -->
+            <rect x="65" y="75" width="10" height="9" rx="3" fill="none" stroke="white" stroke-width="2"/>
+            <!-- Body - fairy dress (shorter/flouncy) -->
+            <path d="M44 110 Q48 82 70 80 Q92 82 96 110 L96 150 Q70 160 44 150 Z" fill="none" stroke="white" stroke-width="2.5"/>
+            <!-- Layered skirt ruffles -->
+            <path d="M44 125 Q70 134 96 125" stroke="white" stroke-width="1.5" fill="none" opacity=".6"/>
+            <path d="M42 140 Q70 150 98 140" stroke="white" stroke-width="1.5" fill="none" opacity=".5"/>
+            <!-- Ruffle hem -->
+            <path d="M44 150 Q52 163 60 150 Q68 163 76 150 Q84 163 92 150 Q94 158 96 150" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/>
+            <!-- Star sparkles on dress -->
+            <text x="61" y="100" font-size="8" fill="white" opacity=".75">✦</text>
+            <text x="74" y="118" font-size="6" fill="white" opacity=".65">✦</text>
+            <text x="54" y="134" font-size="5" fill="white" opacity=".55">✦</text>
+            <text x="80" y="140" font-size="7" fill="white" opacity=".6">✦</text>
+            <!-- Arms -->
+            <path d="M44 108 Q28 124 32 142" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" opacity=".8"/>
+            <path d="M96 108 Q112 124 108 142" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" opacity=".8"/>
+            <!-- Magic wand in right hand -->
+            <line x1="108" y1="142" x2="128" y2="122" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity=".9"/>
+            <polygon points="128,112 133,122 123,122" fill="none" stroke="white" stroke-width="2" opacity=".9"/>
+            <circle cx="128" cy="116" r="3.5" fill="white" opacity=".7"/>
+            <!-- Wand sparkles -->
+            <text x="130" y="110" font-size="8" fill="white" opacity=".85">✦</text>
+            <text x="120" y="116" font-size="6" fill="white" opacity=".7">✦</text>
+            <text x="134" y="122" font-size="5" fill="white" opacity=".6">✦</text>
+            <!-- Leg hints -->
+            <path d="M56 150 Q54 172 52 185" stroke="white" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
+            <path d="M84 150 Q86 172 88 185" stroke="white" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
+            <!-- Tiny shoes -->
+            <ellipse cx="50" cy="188" rx="8" ry="5" fill="none" stroke="white" stroke-width="2" opacity=".7"/>
+            <ellipse cx="90" cy="188" rx="8" ry="5" fill="none" stroke="white" stroke-width="2" opacity=".7"/>
+          </svg>
+        </div>
+        <p class="card-label">جنية سحرية</p>
+        <p class="card-label-en">Fairy</p>
+      </div>
+
+    </div><!-- /cards-grid -->
+
+    <!-- Tap hint -->
+    <p class="tap-hint">👆 اضغطي على العروسة للاختيار</p>
+
+    <div style="height: clamp(16px,4vw,32px);"></div>
+
+  </div><!-- /char-content -->
+</div><!-- /char-screen -->
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--         SCREEN 3 — COLORING STUDIO (M3)           -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="canvas-screen" class="screen dream-bg hidden">
+
+  <!-- Stars -->
+  <div class="stars-layer" id="stars-canvas"></div>
+  <!-- Clouds -->
+  <div class="cloud" style="width:140px;height:44px;top:10%;left:4%;animation-duration:20s;"></div>
+  <div class="cloud" style="width:100px;height:32px;top:22%;right:5%;animation-duration:25s;animation-delay:-7s;"></div>
+
+  <!-- Back button -->
+  <button class="cs3-back-btn" onclick="goToChar()">
+    <span style="font-size:1.1em;">←</span> رجوع
+  </button>
+
+  <!-- Toast message for Phase 4 placeholder -->
+  <div id="cs3-toast">🚧 قريباً — إضافة الإكسسوارات! 🎀</div>
+
+  <!-- Main layout -->
+  <div id="cs3-layout">
+
+    <!-- Title header -->
+    <div id="cs3-header">
+      <span id="cs3-char-emoji">👑</span>
+      <span id="cs3-char-name">الأميرة</span>
+      <span>🎨</span>
+    </div>
+
+    <!-- Canvas area (outline SVG on top of paint canvas) -->
+    <div id="cs3-canvas-area">
+      <canvas id="paint-canvas"></canvas>
+      <div id="cs3-outline-svg"></div>
+    </div>
+
+    <!-- Bottom tools panel -->
+    <div id="cs3-bottom">
+
+      <!-- 1. Color palette (scrollable) -->
+      <div id="cs3-palette"><!-- built by JS --></div>
+
+      <!-- 2. Tool row: brush sizes + brush + eraser + clear -->
+      <div id="cs3-tool-row">
+        <div class="sz-row">
+          <button class="sz-btn sz-active" data-size="6"  aria-label="قلم رفيع">●</button>
+          <button class="sz-btn"           data-size="13" aria-label="قلم متوسط">●</button>
+          <button class="sz-btn"           data-size="24" aria-label="قلم سميك">●</button>
+        </div>
+        <button id="cs3-brush-btn"  class="tool-btn tool-active" onclick="setTool('brush')"  aria-label="فرشاة">🖌️</button>
+        <button id="cs3-eraser-btn" class="tool-btn"             onclick="setTool('eraser')" aria-label="ممحاة">🧹</button>
+        <button                     class="tool-btn"             onclick="clearPaint()"      aria-label="مسح الكل">🗑️</button>
+      </div>
+
+      <!-- 3. Next button (Phase 4 wired in M4) -->
+      <button id="cs3-next-btn" onclick="goToAccessories()">
+        إضافة إكسسوارات ✨
+      </button>
+
+    </div><!-- /cs3-bottom -->
+  </div><!-- /cs3-layout -->
+</div><!-- /canvas-screen -->
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--      SCREEN 4 — DRESS-UP STUDIO (M4)              -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="dress-screen" class="screen dream-bg hidden">
+
+  <!-- Stars -->
+  <div class="stars-layer" id="stars-dress"></div>
+  <!-- Clouds -->
+  <div class="cloud" style="width:130px;height:40px;top:9%;left:5%;animation-duration:21s;"></div>
+  <div class="cloud" style="width:95px;height:30px;top:20%;right:4%;animation-duration:26s;animation-delay:-8s;"></div>
+
+  <!-- Back button -->
+  <button class="cs3-back-btn" onclick="goToCanvasFromDress()">
+    <span style="font-size:1.1em;">←</span> رجوع
+  </button>
+
+  <!-- Main layout -->
+  <div id="ds-layout">
+
+    <!-- Header -->
+    <div id="ds-header">
+      <span id="ds-char-emoji">👑</span>
+      <span id="ds-char-name">الأميرة</span>
+      <span>🎀</span>
+    </div>
+
+    <!-- Stage: painted image + outline + placed stickers -->
+    <div id="ds-stage" onclick="dsDeselect(event)">
+      <img id="ds-painted-img" alt="لوحة التلوين" />
+      <div id="ds-outline-overlay"></div>
+      <div id="ds-stickers-layer"></div>
+    </div>
+
+    <!-- Bottom panel -->
+    <div id="ds-bottom">
+      <p class="ds-hint">✨ اضغطي على إكسسوار لإضافته — اسحبيه لتغيير موضعه 🎀</p>
+      <div id="ds-cat-tabs"><!-- built by JS --></div>
+      <div id="ds-sticker-scroll"><!-- built by JS --></div>
+      <button id="ds-finish-btn" onclick="goToShowcase()">🌟 عرضي عمليكِ! 🌟</button>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--      SCREEN 5 — SHOWCASE & GALLERY (M5)          -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="showcase-screen" class="screen dream-bg hidden">
+
+  <!-- Stars -->
+  <div class="stars-layer" id="stars-showcase"></div>
+  <!-- Clouds -->
+  <div class="cloud" style="width:150px;height:46px;top:10%;right:4%;animation-duration:19s;"></div>
+  <div class="cloud" style="width:100px;height:32px;top:22%;left:5%;animation-duration:23s;animation-delay:-6s;"></div>
+
+  <!-- Back button -->
+  <button class="cs3-back-btn" onclick="goToDressFromShowcase()">
+    <span style="font-size:1.1em;">←</span> رجوع
+  </button>
+
+  <!-- Scrollable layout -->
+  <div id="sc-layout">
+
+    <!-- Header -->
+    <div id="sc-header">
+      <span id="sc-char-emoji">🌟</span>
+      عمليكِ رائع! 🎉
+    </div>
+
+    <!-- Artwork frame -->
+    <div id="sc-artwork-wrap">
+      <span class="sc-frame-star">⭐</span>
+      <span class="sc-frame-star">💖</span>
+      <span class="sc-frame-star">✨</span>
+      <span class="sc-frame-star">🎀</span>
+      <canvas id="sc-final-canvas"></canvas>
+    </div>
+
+    <!-- Character name -->
+    <div id="sc-name-ribbon">
+      <span id="sc-char-label">الأميرة</span>
+      <span>✨</span>
+    </div>
+
+    <!-- Action buttons -->
+    <div id="sc-actions">
+      <button class="sc-btn-primary" onclick="scSaveToGallery()">
+        💾 احفظي في معرضكِ
+      </button>
+      <button class="sc-btn-secondary" onclick="scDownloadArtwork()">
+        ⬇️ تحميل الصورة
+      </button>
+      <button class="sc-btn-secondary" onclick="scPlayAgain()">
+        🎨 العبي من جديد!
+      </button>
+    </div>
+
+    <!-- Gallery section -->
+    <div id="sc-gallery-section">
+      <div id="sc-gallery-title">🖼️ معرض إبداعاتكِ</div>
+      <div id="sc-gallery-grid"><!-- filled by JS --></div>
+    </div>
+
+  </div><!-- /sc-layout -->
+</div><!-- /showcase-screen -->
+
+
+<!-- ── PWA install banner (Android/Desktop) ── -->
+<div id="pwa-banner">
+  <div id="pwa-banner-icon">🌟</div>
+  <div id="pwa-banner-text">
+    <strong>ثبّتي التطبيق!</strong>
+    <span>العبي بدون إنترنت في أي وقت 🎀</span>
+  </div>
+  <div id="pwa-banner-btns">
+    <button class="pwa-btn-install" onclick="pwaTriggerInstall()">تثبيت</button>
+    <button class="pwa-btn-dismiss" onclick="pwaDismiss()">لاحقاً</button>
+  </div>
+</div>
+
+<!-- ── iOS install hint ── -->
+<div id="pwa-ios-hint">
+  <p>📲 ثبّتي التطبيق على iPhone!</p>
+  <div class="ios-steps">
+    اضغطي على <strong>زر المشاركة</strong> ⬆️<br>
+    ثم اختاري <strong>"إضافة إلى الشاشة الرئيسية"</strong> 🏠
+  </div>
+  <button id="pwa-ios-close" onclick="pwaDismiss()">حسناً 💖</button>
+</div>
+
+<!-- ── Success toast ── -->
+<div id="sc-toast"></div>
+
+
+<script>
+/* ═══════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════ */
+let selectedChar = null;
+
+/* ═══════════════════════════════════════════════════
+   STARS GENERATOR
+═══════════════════════════════════════════════════ */
+function generateStars(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const emojis = ['⭐','🌟','✨','💫','🌸','💖','🎀','💎','🌈','🦋','🍭','🎠','👑'];
+  const count = window.innerWidth < 480 ? 16 : 24;
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('span');
+    el.className = 'star';
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.cssText = `
+      left:${Math.random() * 100}%;
+      font-size:${14 + Math.random() * 16}px;
+      animation-duration:${7 + Math.random() * 10}s;
+      animation-delay:${Math.random() * 12}s;
+    `;
+    container.appendChild(el);
+  }
+}
+generateStars('stars-welcome');
+generateStars('stars-char');
+
+/* ═══════════════════════════════════════════════════
+   SCREEN TRANSITIONS
+═══════════════════════════════════════════════════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    if (s.id !== id) {
+      s.classList.add('slide-out-left');
+      s.classList.remove('slide-in-right');
+    }
+  });
+  const target = document.getElementById(id);
+  target.classList.remove('hidden', 'slide-out-left');
+  target.classList.add('slide-in-right');
+  // Scroll to top
+  target.scrollTop = 0;
+}
+
+function goToWelcome() {
+  showScreen('welcome-screen');
+  document.getElementById('welcome-screen').classList.remove('slide-out-left');
+  document.getElementById('char-screen').classList.add('hidden');
+  document.getElementById('char-screen').classList.remove('slide-in-right');
+  selectedChar = null;
+  document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
+}
+
+/* ─── Start button ─── */
+document.getElementById('btn-start').addEventListener('click', function () {
+  this.style.transform = 'scale(0.93)';
+  setTimeout(() => {
+    this.style.transform = '';
+    showScreen('char-screen');
+  }, 160);
+});
+
+/* ═══════════════════════════════════════════════════
+   CHARACTER CARDS
+═══════════════════════════════════════════════════ */
+const CHAR_NAMES = {
+  princess: 'الأميرة',
+  mermaid: 'حورية البحر',
+  fairy: 'الجنية السحرية'
+};
+
+document.querySelectorAll('.char-card').forEach(card => {
+
+  function handleSelect() {
+    const char = card.dataset.char;
+    selectedChar = char;
+
+    // Visual feedback — select state
+    document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+
+    // Burst emoji
+    spawnBurst(card);
+
+    // Brief delay then proceed
+    setTimeout(() => {
+      showScreen('canvas-screen');
+      initCanvasScreen(char);
+    }, 350);
+  }
+
+  card.addEventListener('click', handleSelect);
+  card.addEventListener('touchend', function(e) { e.preventDefault(); handleSelect(); });
+
+  // Press visual feedback
+  card.addEventListener('pointerdown', () => card.classList.add('pressed'));
+  card.addEventListener('pointerup', () => card.classList.remove('pressed'));
+  card.addEventListener('pointerleave', () => card.classList.remove('pressed'));
+  card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') handleSelect(); });
+});
+
+/* ═══════════════════════════════════════════════════
+   M3 — CANVAS STATE
+═══════════════════════════════════════════════════ */
+let canvasTool    = 'brush';
+let canvasColor   = '#ff6eb4';
+let canvasSize    = 6;
+let canvasPainting = false;
+let canvasLastX   = 0;
+let canvasLastY   = 0;
+let canvasStarsGenerated = false;
+
+const PALETTE_COLORS = [
+  { hex: '#ff6eb4', name: 'وردي' },
+  { hex: '#ff1493', name: 'وردي فاتح' },
+  { hex: '#ff3333', name: 'أحمر' },
+  { hex: '#ff8c00', name: 'برتقالي' },
+  { hex: '#ffd700', name: 'ذهبي' },
+  { hex: '#d4f531', name: 'ليموني' },
+  { hex: '#22c55e', name: 'أخضر' },
+  { hex: '#06b6d4', name: 'فيروزي' },
+  { hex: '#60a5fa', name: 'سماوي' },
+  { hex: '#3b82f6', name: 'أزرق' },
+  { hex: '#a855f7', name: 'بنفسجي' },
+  { hex: '#ec4899', name: 'فوشيا' },
+  { hex: '#f97316', name: 'بشرة' },
+  { hex: '#92400e', name: 'بني' },
+  { hex: '#111111', name: 'أسود' },
+  { hex: '#ffffff', name: 'أبيض' },
+];
+
+const CHAR_INFO = {
+  princess: { emoji: '👑', name: 'الأميرة' },
+  mermaid:  { emoji: '🌊', name: 'حورية البحر' },
+  fairy:    { emoji: '🧚', name: 'الجنية السحرية' },
+};
+
+/* ─── Character outline SVGs (dark purple on transparent) ─── */
+function getCharOutlineSVG(char) {
+  const S = '#4c1d95'; // dark violet stroke
+  if (char === 'princess') return `
+<svg viewBox="0 0 120 200" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="36,38 44,18 54,32 60,12 66,32 76,18 84,38" fill="none" stroke="${S}" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="60" cy="14" r="4" fill="${S}"/>
+  <circle cx="44" cy="24" r="3" fill="${S}"/>
+  <circle cx="76" cy="24" r="3" fill="${S}"/>
+  <circle cx="60" cy="58" r="22" fill="none" stroke="${S}" stroke-width="3"/>
+  <path d="M38 52 Q25 75 28 110 Q32 130 36 140" stroke="${S}" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M82 52 Q95 75 92 110 Q88 130 84 140" stroke="${S}" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <ellipse cx="60" cy="38" rx="22" ry="12" fill="none" stroke="${S}" stroke-width="2.5"/>
+  <ellipse cx="52" cy="56" rx="4" ry="4.5" fill="${S}"/>
+  <ellipse cx="68" cy="56" rx="4" ry="4.5" fill="${S}"/>
+  <circle cx="53.5" cy="54.5" r="1.5" fill="white"/>
+  <circle cx="69.5" cy="54.5" r="1.5" fill="white"/>
+  <line x1="48.5" y1="52.5" x2="46" y2="49" stroke="${S}" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="71.5" y1="52.5" x2="74" y2="49" stroke="${S}" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M53 65 Q60 72 67 65" stroke="${S}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="46" cy="62" rx="5.5" ry="4" fill="${S}" opacity=".18"/>
+  <ellipse cx="74" cy="62" rx="5.5" ry="4" fill="${S}" opacity=".18"/>
+  <rect x="55" y="78" width="10" height="10" rx="3" fill="none" stroke="${S}" stroke-width="2.5"/>
+  <path d="M28 125 Q35 88 60 86 Q85 88 92 125 L100 188 Q60 198 20 188 Z" fill="none" stroke="${S}" stroke-width="3"/>
+  <path d="M38 105 Q60 115 82 105" stroke="${S}" stroke-width="2" fill="none"/>
+  <path d="M32 125 Q60 138 88 125" stroke="${S}" stroke-width="1.8" fill="none"/>
+  <path d="M26 148 Q60 162 94 148" stroke="${S}" stroke-width="1.5" fill="none"/>
+  <path d="M28 120 Q16 138 20 155" stroke="${S}" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M92 120 Q104 138 100 155" stroke="${S}" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M20 188 Q30 200 42 188 Q54 200 66 188 Q78 200 90 188 Q96 197 100 188" stroke="${S}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M50 92 L44 84 L56 90" fill="${S}"/>
+  <path d="M70 92 L76 84 L64 90" fill="${S}"/>
+  <circle cx="60" cy="92" r="3.5" fill="${S}"/>
+</svg>`;
+
+  if (char === 'mermaid') return `
+<svg viewBox="0 0 120 210" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="48" r="22" fill="none" stroke="${S}" stroke-width="3"/>
+  <path d="M38 42 Q20 65 22 100 Q24 125 30 145 Q40 165 38 180" stroke="${S}" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M82 42 Q100 65 98 100 Q96 125 90 145" stroke="${S}" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M48 70 Q38 90 40 120 Q42 145 38 165" stroke="${S}" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <ellipse cx="60" cy="28" rx="22" ry="10" fill="none" stroke="${S}" stroke-width="2.5"/>
+  <ellipse cx="52" cy="46" rx="4" ry="4.5" fill="${S}"/>
+  <ellipse cx="68" cy="46" rx="4" ry="4.5" fill="${S}"/>
+  <circle cx="53.5" cy="44.5" r="1.5" fill="white"/>
+  <circle cx="69.5" cy="44.5" r="1.5" fill="white"/>
+  <line x1="48.5" y1="42.5" x2="46" y2="39" stroke="${S}" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="71.5" y1="42.5" x2="74" y2="39" stroke="${S}" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M53 55 Q60 62 67 55" stroke="${S}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="46" cy="52" rx="5" ry="3.5" fill="${S}" opacity=".18"/>
+  <ellipse cx="74" cy="52" rx="5" ry="3.5" fill="${S}" opacity=".18"/>
+  <rect x="55" y="68" width="10" height="9" rx="3" fill="none" stroke="${S}" stroke-width="2.5"/>
+  <path d="M38 88 Q42 76 60 74 Q78 76 82 88 L84 115 Q60 122 36 115 Z" fill="none" stroke="${S}" stroke-width="3"/>
+  <path d="M42 95 Q60 102 78 95" stroke="${S}" stroke-width="1.5" fill="none"/>
+  <path d="M40 105 Q60 113 80 105" stroke="${S}" stroke-width="1.5" fill="none"/>
+  <path d="M50 80 Q60 87 70 80" stroke="${S}" stroke-width="2" fill="none"/>
+  <path d="M38 92 Q22 108 26 128" stroke="${S}" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M82 92 Q98 108 94 128" stroke="${S}" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M36 115 Q32 145 36 168 Q48 195 60 200 Q72 195 84 168 Q88 145 84 115 Q60 125 36 115 Z" fill="none" stroke="${S}" stroke-width="3"/>
+  <path d="M40 130 Q60 138 80 130" stroke="${S}" stroke-width="1.5" fill="none"/>
+  <path d="M38 145 Q60 154 82 145" stroke="${S}" stroke-width="1.5" fill="none"/>
+  <path d="M39 160 Q60 170 81 160" stroke="${S}" stroke-width="1.5" fill="none"/>
+  <path d="M44 195 Q30 210 20 205 Q35 185 44 195" fill="none" stroke="${S}" stroke-width="2.5"/>
+  <path d="M76 195 Q90 210 100 205 Q85 185 76 195" fill="none" stroke="${S}" stroke-width="2.5"/>
+  <circle cx="104" cy="60" r="5" fill="none" stroke="${S}" stroke-width="1.8"/>
+  <circle cx="110" cy="44" r="3.5" fill="none" stroke="${S}" stroke-width="1.5"/>
+  <circle cx="14" cy="80" r="4" fill="none" stroke="${S}" stroke-width="1.5"/>
+</svg>`;
+
+  if (char === 'fairy') return `
+<svg viewBox="0 0 140 210" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <path d="M36 95 Q5 60 10 30 Q20 15 42 40 Q50 55 44 80" fill="none" stroke="${S}" stroke-width="2.5"/>
+  <path d="M36 95 Q2 90 5 110 Q12 130 40 115" fill="none" stroke="${S}" stroke-width="2.5"/>
+  <path d="M36 95 Q22 55 26 35" stroke="${S}" stroke-width="1.2" fill="none"/>
+  <path d="M36 95 Q14 100 16 115" stroke="${S}" stroke-width="1.2" fill="none"/>
+  <path d="M104 95 Q135 60 130 30 Q120 15 98 40 Q90 55 96 80" fill="none" stroke="${S}" stroke-width="2.5"/>
+  <path d="M104 95 Q138 90 135 110 Q128 130 100 115" fill="none" stroke="${S}" stroke-width="2.5"/>
+  <path d="M104 95 Q118 55 114 35" stroke="${S}" stroke-width="1.2" fill="none"/>
+  <path d="M104 95 Q126 100 124 115" stroke="${S}" stroke-width="1.2" fill="none"/>
+  <circle cx="70" cy="55" r="22" fill="none" stroke="${S}" stroke-width="3"/>
+  <ellipse cx="70" cy="35" rx="22" ry="12" fill="none" stroke="${S}" stroke-width="3"/>
+  <path d="M48 48 Q36 62 38 80" stroke="${S}" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M92 48 Q104 62 102 80" stroke="${S}" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <circle cx="86" cy="33" r="5" fill="none" stroke="${S}" stroke-width="2"/>
+  <circle cx="86" cy="33" r="2" fill="${S}"/>
+  <ellipse cx="62" cy="53" rx="4" ry="4.5" fill="${S}"/>
+  <ellipse cx="78" cy="53" rx="4" ry="4.5" fill="${S}"/>
+  <circle cx="63.5" cy="51.5" r="1.5" fill="white"/>
+  <circle cx="79.5" cy="51.5" r="1.5" fill="white"/>
+  <line x1="58.5" y1="49.5" x2="56" y2="46" stroke="${S}" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="81.5" y1="49.5" x2="84" y2="46" stroke="${S}" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M63 62 Q70 69 77 62" stroke="${S}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="56" cy="59" rx="5" ry="3.5" fill="${S}" opacity=".18"/>
+  <ellipse cx="84" cy="59" rx="5" ry="3.5" fill="${S}" opacity=".18"/>
+  <rect x="65" y="75" width="10" height="9" rx="3" fill="none" stroke="${S}" stroke-width="2.5"/>
+  <path d="M44 110 Q48 82 70 80 Q92 82 96 110 L96 150 Q70 160 44 150 Z" fill="none" stroke="${S}" stroke-width="3"/>
+  <path d="M44 125 Q70 134 96 125" stroke="${S}" stroke-width="1.8" fill="none"/>
+  <path d="M42 140 Q70 150 98 140" stroke="${S}" stroke-width="1.5" fill="none"/>
+  <path d="M44 150 Q52 163 60 150 Q68 163 76 150 Q84 163 92 150 Q94 158 96 150" stroke="${S}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M44 108 Q28 124 32 142" stroke="${S}" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M96 108 Q112 124 108 142" stroke="${S}" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <line x1="108" y1="142" x2="128" y2="122" stroke="${S}" stroke-width="3" stroke-linecap="round"/>
+  <polygon points="128,112 133,122 123,122" fill="none" stroke="${S}" stroke-width="2.5"/>
+  <circle cx="128" cy="116" r="3.5" fill="${S}"/>
+  <path d="M56 150 Q54 172 52 185" stroke="${S}" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M84 150 Q86 172 88 185" stroke="${S}" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="50" cy="188" rx="8" ry="5" fill="none" stroke="${S}" stroke-width="2.5"/>
+  <ellipse cx="90" cy="188" rx="8" ry="5" fill="none" stroke="${S}" stroke-width="2.5"/>
+</svg>`;
+  return '';
+}
+
+/* ─── Canvas screen initializer ─── */
+function initCanvasScreen(char) {
+  const info = CHAR_INFO[char] || { emoji: '🎨', name: '' };
+  document.getElementById('cs3-char-emoji').textContent = info.emoji;
+  document.getElementById('cs3-char-name').textContent  = info.name;
+
+  // Inject outline SVG overlay
+  document.getElementById('cs3-outline-svg').innerHTML = getCharOutlineSVG(char);
+
+  // Generate stars once
+  if (!canvasStarsGenerated) {
+    generateStars('stars-canvas');
+    canvasStarsGenerated = true;
+  }
+
+  // Size canvas and fill white — defer to after layout is applied
+  setTimeout(resizePaintCanvas, 60);
+}
+
+function resizePaintCanvas() {
+  const pc   = document.getElementById('paint-canvas');
+  const area = document.getElementById('cs3-canvas-area');
+  const w = area.clientWidth;
+  const h = area.clientHeight;
+  if (w > 0 && h > 0) {
+    pc.width  = w;
+    pc.height = h;
+    const ctx = pc.getContext('2d');
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, w, h);
+  }
+}
+
+/* ─── Clear paint layer ─── */
+function clearPaint() {
+  const pc = document.getElementById('paint-canvas');
+  const ctx = pc.getContext('2d');
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, pc.width, pc.height);
+}
+
+/* ─── Tool switcher ─── */
+function setTool(tool) {
+  canvasTool = tool;
+  document.getElementById('cs3-brush-btn').classList.toggle('tool-active',  tool === 'brush');
+  document.getElementById('cs3-eraser-btn').classList.toggle('tool-active', tool === 'eraser');
+}
+
+/* ─── Navigation from canvas screen ─── */
+function goToChar() {
+  showScreen('char-screen');
+  selectedChar = null;
+  document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
+}
+
+function goToAccessories() {
+  // Capture the painted canvas as image data
+  const pc = document.getElementById('paint-canvas');
+  dsPaintedDataUrl = pc.toDataURL('image/png');
+  dsChar = selectedChar;
+  showScreen('dress-screen');
+  initDressScreen();
+}
+
+function spawnBurstCenter() {
+  const emojis = ['✨','⭐','💖','🌟','🎀','💫','🌈','🦋'];
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  for (let i = 0; i < 14; i++) {
+    const el = document.createElement('span');
+    el.textContent = emojis[i % emojis.length];
+    const angle = (i / 14) * Math.PI * 2;
+    const dist  = 80 + Math.random() * 70;
+    Object.assign(el.style, {
+      position: 'fixed',
+      left: cx + 'px', top: cy + 'px',
+      fontSize: (16 + Math.random() * 16) + 'px',
+      pointerEvents: 'none', zIndex: '9999',
+      transition: 'transform .75s cubic-bezier(.2,.8,.4,1), opacity .75s ease',
+      transform: 'translate(-50%,-50%) scale(0.4)', opacity: '1',
+    });
+    document.body.appendChild(el);
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      el.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1.3)`;
+      el.style.opacity = '0';
+    }));
+    setTimeout(() => el.remove(), 850);
+  }
+}
+
+/* ─── Build color palette ─── */
+function buildPalette() {
+  const palette = document.getElementById('cs3-palette');
+  PALETTE_COLORS.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'color-swatch' + (i === 0 ? ' cs-active' : '');
+    btn.style.background = c.hex;
+    btn.setAttribute('aria-label', c.name);
+    if (c.hex === '#ffffff') btn.style.border = '3px solid #ccc';
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('cs-active'));
+      btn.classList.add('cs-active');
+      canvasColor = c.hex;
+      if (canvasTool === 'eraser') setTool('brush');
+    });
+    palette.appendChild(btn);
+  });
+}
+buildPalette();
+
+/* ─── Brush-size buttons ─── */
+document.querySelectorAll('.sz-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sz-btn').forEach(b => b.classList.remove('sz-active'));
+    btn.classList.add('sz-active');
+    canvasSize = parseInt(btn.dataset.size);
+  });
+});
+
+/* ─── Drawing events (pointer API — mouse + touch) ─── */
+(function setupDrawing() {
+  const pc = document.getElementById('paint-canvas');
+
+  function getPos(e) {
+    const rect = pc.getBoundingClientRect();
+    return {
+      x: (e.clientX - rect.left) * (pc.width  / rect.width),
+      y: (e.clientY - rect.top)  * (pc.height / rect.height),
+    };
+  }
+
+  function applyStroke(ctx, x0, y0, x1, y1) {
+    const isEraser = canvasTool === 'eraser';
+    const lw = isEraser ? canvasSize * 2.8 : canvasSize;
+    ctx.globalCompositeOperation = isEraser ? 'destination-out' : 'source-over';
+    ctx.strokeStyle = canvasColor;
+    ctx.lineWidth   = lw;
+    ctx.lineCap     = 'round';
+    ctx.lineJoin    = 'round';
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  function dotAt(ctx, x, y) {
+    const isEraser = canvasTool === 'eraser';
+    const r = (isEraser ? canvasSize * 2.8 : canvasSize) / 2;
+    ctx.globalCompositeOperation = isEraser ? 'destination-out' : 'source-over';
+    ctx.fillStyle = canvasColor;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  pc.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    canvasPainting = true;
+    pc.setPointerCapture(e.pointerId);
+    const pos = getPos(e);
+    canvasLastX = pos.x; canvasLastY = pos.y;
+    dotAt(pc.getContext('2d'), pos.x, pos.y);
+  }, { passive: false });
+
+  pc.addEventListener('pointermove', e => {
+    e.preventDefault();
+    if (!canvasPainting) return;
+    const pos = getPos(e);
+    applyStroke(pc.getContext('2d'), canvasLastX, canvasLastY, pos.x, pos.y);
+    canvasLastX = pos.x; canvasLastY = pos.y;
+  }, { passive: false });
+
+  pc.addEventListener('pointerup',     () => { canvasPainting = false; });
+  pc.addEventListener('pointercancel', () => { canvasPainting = false; });
+})();
+function spawnBurst(card) {
+  const rect = card.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const emojis = ['✨','⭐','💖','🌟','🎀','💫'];
+
+  for (let i = 0; i < 8; i++) {
+    const el = document.createElement('span');
+    el.textContent = emojis[i % emojis.length];
+    const angle = (i / 8) * Math.PI * 2;
+    const dist  = 55 + Math.random() * 40;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+
+    Object.assign(el.style, {
+      position: 'fixed',
+      left: cx + 'px', top: cy + 'px',
+      fontSize: (14 + Math.random() * 12) + 'px',
+      pointerEvents: 'none',
+      zIndex: '9999',
+      transition: 'transform .6s cubic-bezier(.2,.8,.4,1), opacity .6s ease',
+      transform: 'translate(-50%,-50%) scale(0.5)',
+      opacity: '1',
+    });
+    document.body.appendChild(el);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1.2)`;
+        el.style.opacity = '0';
+      });
+    });
+    setTimeout(() => el.remove(), 700);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   M4 — DRESS-UP STUDIO STATE & DATA
+═══════════════════════════════════════════════════ */
+let dsPaintedDataUrl = null;
+let dsChar = null;
+let dsActiveCat = 'crowns';
+let dsSelectedEl = null;
+let dsStickerCount = 0;
+let dsStarsGenerated = false;
+
+const DS_CATEGORIES = [
+  { id: 'crowns',  label: '👑 تيجان'   },
+  { id: 'magic',   label: '🧚 سحر'     },
+  { id: 'bows',    label: '🎀 زينة'    },
+  { id: 'jewelry', label: '💍 مجوهرات' },
+  { id: 'extras',  label: '🌈 إضافات'  },
+];
+
+const DS_STICKERS = {
+  crowns: [
+    { id:'sc1', label:'تاج ذهبي', w:90, h:65, svg:`<svg viewBox="0 0 90 65" xmlns="http://www.w3.org/2000/svg"><path d="M5 60 L20 20 L38 42 L45 5 L52 42 L70 20 L85 60 Z" fill="#FFD700" stroke="#FFA500" stroke-width="2.5" stroke-linejoin="round"/><rect x="5" y="53" width="80" height="11" rx="4" fill="#FFA500"/><circle cx="45" cy="10" r="6" fill="#ff6eb4"/><circle cx="21" cy="36" r="4" fill="#a78bfa"/><circle cx="69" cy="36" r="4" fill="#60a5fa"/><circle cx="15" cy="57" r="4" fill="#ff6eb4"/><circle cx="45" cy="57" r="4" fill="#a78bfa"/><circle cx="75" cy="57" r="4" fill="#60a5fa"/></svg>` },
+    { id:'sc2', label:'تيارة', w:100, h:52, svg:`<svg viewBox="0 0 100 52" xmlns="http://www.w3.org/2000/svg"><path d="M5 48 Q5 30 20 24 Q30 14 50 7 Q70 14 80 24 Q95 30 95 48" fill="none" stroke="#FFD700" stroke-width="4.5" stroke-linecap="round"/><circle cx="50" cy="7" r="7" fill="#ff6eb4" stroke="#FFD700" stroke-width="2"/><circle cx="27" cy="19" r="5" fill="#a78bfa" stroke="#FFD700" stroke-width="1.5"/><circle cx="73" cy="19" r="5" fill="#60a5fa" stroke="#FFD700" stroke-width="1.5"/><circle cx="13" cy="34" r="4" fill="#ffd700"/><circle cx="87" cy="34" r="4" fill="#ffd700"/></svg>` },
+    { id:'sc3', label:'إكليل زهور', w:100, h:56, svg:`<svg viewBox="0 0 100 56" xmlns="http://www.w3.org/2000/svg"><path d="M8 46 Q10 26 50 18 Q90 26 92 46" fill="none" stroke="#22c55e" stroke-width="4" stroke-linecap="round"/><circle cx="20" cy="34" r="8" fill="#ff6eb4"/><circle cx="20" cy="34" r="3.5" fill="#fff"/><circle cx="35" cy="24" r="8" fill="#a78bfa"/><circle cx="35" cy="24" r="3.5" fill="#fff"/><circle cx="50" cy="20" r="9" fill="#ffd700"/><circle cx="50" cy="20" r="3.5" fill="#fff"/><circle cx="65" cy="24" r="8" fill="#ff6eb4"/><circle cx="65" cy="24" r="3.5" fill="#fff"/><circle cx="80" cy="34" r="8" fill="#60a5fa"/><circle cx="80" cy="34" r="3.5" fill="#fff"/><ellipse cx="27" cy="30" rx="4" ry="6" fill="#22c55e" transform="rotate(-20,27,30)"/><ellipse cx="57" cy="21" rx="4" ry="6" fill="#22c55e" transform="rotate(10,57,21)"/><ellipse cx="73" cy="30" rx="4" ry="6" fill="#22c55e" transform="rotate(20,73,30)"/></svg>` },
+    { id:'sc4', label:'قبعة سحرية', w:76, h:100, svg:`<svg viewBox="0 0 76 100" xmlns="http://www.w3.org/2000/svg"><polygon points="38,4 11,78 66,78" fill="#a855f7" stroke="#7c3aed" stroke-width="2.5" stroke-linejoin="round"/><ellipse cx="38" cy="78" rx="33" ry="10" fill="#7c3aed"/><path d="M22 56 Q38 46 55 56" stroke="#ffd700" stroke-width="2" fill="none" opacity=".7"/><text x="27" y="47" font-size="13" fill="#ffd700">⭐</text><circle cx="38" cy="4" r="4" fill="#ffd700"/></svg>` },
+    { id:'sc5', label:'هالة نجوم', w:100, h:40, svg:`<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="20" rx="44" ry="10" fill="none" stroke="#FFD700" stroke-width="3" stroke-dasharray="5,3"/><text x="4" y="16" font-size="14" fill="#FFD700">⭐</text><text x="25" y="11" font-size="10" fill="#ff6eb4">✦</text><text x="42" y="9" font-size="14" fill="#FFD700">⭐</text><text x="62" y="11" font-size="10" fill="#a78bfa">✦</text><text x="78" y="16" font-size="14" fill="#FFD700">⭐</text></svg>` },
+  ],
+  magic: [
+    { id:'sm1', label:'أجنحة جنية', w:120, h:90, svg:`<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg"><path d="M58 52 Q22 22 10 5 Q30 0 52 32 Q57 42 58 52" fill="rgba(255,182,213,0.75)" stroke="#ff6eb4" stroke-width="2"/><path d="M58 52 Q14 56 8 76 Q28 86 55 63" fill="rgba(216,180,254,0.65)" stroke="#a78bfa" stroke-width="2"/><path d="M62 52 Q98 22 110 5 Q90 0 68 32 Q63 42 62 52" fill="rgba(255,182,213,0.75)" stroke="#ff6eb4" stroke-width="2"/><path d="M62 52 Q106 56 112 76 Q92 86 65 63" fill="rgba(216,180,254,0.65)" stroke="#a78bfa" stroke-width="2"/><text x="22" y="23" font-size="9" fill="#ffd700">✦</text><text x="85" y="23" font-size="9" fill="#ffd700">✦</text><text x="16" y="66" font-size="8" fill="#ff6eb4">✦</text><text x="92" y="66" font-size="8" fill="#ff6eb4">✦</text></svg>` },
+    { id:'sm2', label:'أجنحة فراشة', w:120, h:92, svg:`<svg viewBox="0 0 120 92" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="32" rx="28" ry="22" fill="rgba(251,191,36,0.85)" stroke="#FFA500" stroke-width="2" transform="rotate(-20,32,32)"/><ellipse cx="28" cy="64" rx="18" ry="15" fill="rgba(239,68,68,0.75)" stroke="#dc2626" stroke-width="2" transform="rotate(10,28,64)"/><ellipse cx="88" cy="32" rx="28" ry="22" fill="rgba(251,191,36,0.85)" stroke="#FFA500" stroke-width="2" transform="rotate(20,88,32)"/><ellipse cx="92" cy="64" rx="18" ry="15" fill="rgba(239,68,68,0.75)" stroke="#dc2626" stroke-width="2" transform="rotate(-10,92,64)"/><ellipse cx="60" cy="50" rx="4" ry="22" fill="#7c3aed"/><circle cx="28" cy="27" r="5" fill="rgba(255,255,255,.5)"/><circle cx="92" cy="27" r="5" fill="rgba(255,255,255,.5)"/><circle cx="24" cy="62" r="4" fill="rgba(255,255,255,.4)"/><circle cx="96" cy="62" r="4" fill="rgba(255,255,255,.4)"/></svg>` },
+    { id:'sm3', label:'عصا سحرية', w:70, h:110, svg:`<svg viewBox="0 0 70 110" xmlns="http://www.w3.org/2000/svg"><line x1="20" y1="102" x2="52" y2="34" stroke="#a78bfa" stroke-width="5" stroke-linecap="round"/><polygon points="52,10 55,24 68,24 58,32 62,46 52,38 42,46 46,32 36,24 49,24" fill="#ffd700" stroke="#FFA500" stroke-width="1.5"/><circle cx="52" cy="28" r="6" fill="white" opacity=".7"/><text x="6" y="52" font-size="11" fill="#ffd700">✦</text><text x="52" y="60" font-size="9" fill="#ff6eb4">✦</text><text x="2" y="78" font-size="8" fill="#a78bfa">✦</text></svg>` },
+    { id:'sm4', label:'قوس قزح', w:110, h:66, svg:`<svg viewBox="0 0 110 66" xmlns="http://www.w3.org/2000/svg"><path d="M5 62 Q55 5 105 62" fill="none" stroke="#ff3333" stroke-width="6" stroke-linecap="round"/><path d="M11 62 Q55 13 99 62" fill="none" stroke="#ff8c00" stroke-width="6" stroke-linecap="round"/><path d="M17 62 Q55 20 93 62" fill="none" stroke="#ffd700" stroke-width="6" stroke-linecap="round"/><path d="M23 62 Q55 28 87 62" fill="none" stroke="#22c55e" stroke-width="6" stroke-linecap="round"/><path d="M29 62 Q55 34 81 62" fill="none" stroke="#60a5fa" stroke-width="6" stroke-linecap="round"/><path d="M35 62 Q55 40 75 62" fill="none" stroke="#a855f7" stroke-width="6" stroke-linecap="round"/><circle cx="5" cy="60" r="9" fill="white" opacity=".9"/><circle cx="105" cy="60" r="9" fill="white" opacity=".9"/></svg>` },
+    { id:'sm5', label:'بريق سحري', w:80, h:80, svg:`<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><text x="0" y="30" font-size="24" fill="#ffd700">✨</text><text x="42" y="18" font-size="16" fill="#ff6eb4">✦</text><text x="55" y="48" font-size="20" fill="#a78bfa">✨</text><text x="14" y="58" font-size="15" fill="#60a5fa">✦</text><text x="33" y="74" font-size="18" fill="#ffd700">⭐</text><text x="4" y="78" font-size="12" fill="#ff6eb4">✦</text><text x="62" y="76" font-size="12" fill="#22c55e">✦</text></svg>` },
+  ],
+  bows: [
+    { id:'sb1', label:'ربطة وردية', w:100, h:72, svg:`<svg viewBox="0 0 100 72" xmlns="http://www.w3.org/2000/svg"><path d="M50 36 Q35 16 12 10 Q8 30 20 40 Q35 52 50 36" fill="#ff6eb4" stroke="#db2777" stroke-width="2"/><path d="M50 36 Q65 16 88 10 Q92 30 80 40 Q65 52 50 36" fill="#ff6eb4" stroke="#db2777" stroke-width="2"/><path d="M50 36 Q38 52 22 66" stroke="#ec4899" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M50 36 Q62 52 78 66" stroke="#ec4899" stroke-width="6" fill="none" stroke-linecap="round"/><ellipse cx="50" cy="36" rx="8" ry="8" fill="#fce7f3" stroke="#db2777" stroke-width="2"/><path d="M22 18 Q30 14 40 20" stroke="rgba(255,255,255,.65)" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M78 18 Q70 14 60 20" stroke="rgba(255,255,255,.65)" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>` },
+    { id:'sb2', label:'ربطة بنفسجية', w:90, h:68, svg:`<svg viewBox="0 0 90 68" xmlns="http://www.w3.org/2000/svg"><path d="M45 36 C45 36 24 28 17 14 C13 7 19 2 27 8 C35 14 43 25 45 36 Z" fill="#a78bfa" stroke="#7c3aed" stroke-width="1.5"/><path d="M45 36 C45 36 66 28 73 14 C77 7 71 2 63 8 C55 14 47 25 45 36 Z" fill="#a78bfa" stroke="#7c3aed" stroke-width="1.5"/><path d="M45 36 Q34 52 24 66" stroke="#7c3aed" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M45 36 Q56 52 66 66" stroke="#7c3aed" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="45" cy="36" r="5" fill="#ffd700" stroke="#FFA500" stroke-width="1.5"/></svg>` },
+    { id:'sb3', label:'باقة زهور', w:90, h:90, svg:`<svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg"><circle cx="45" cy="44" r="13" fill="#ffd700"/><ellipse cx="45" cy="26" rx="8" ry="10" fill="#ff6eb4"/><ellipse cx="45" cy="62" rx="8" ry="10" fill="#ff6eb4"/><ellipse cx="27" cy="44" rx="10" ry="8" fill="#ff6eb4"/><ellipse cx="63" cy="44" rx="10" ry="8" fill="#ff6eb4"/><circle cx="45" cy="44" r="8" fill="#ffd700"/><circle cx="45" cy="44" r="4" fill="white"/><circle cx="18" cy="18" r="8" fill="#a78bfa"/><circle cx="18" cy="18" r="3.5" fill="white"/><circle cx="72" cy="18" r="8" fill="#60a5fa"/><circle cx="72" cy="18" r="3.5" fill="white"/><circle cx="18" cy="72" r="7" fill="#22c55e"/><circle cx="18" cy="72" r="3" fill="white"/><circle cx="72" cy="72" r="7" fill="#ec4899"/><circle cx="72" cy="72" r="3" fill="white"/></svg>` },
+    { id:'sb4', label:'نجوم لامعة', w:90, h:90, svg:`<svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg"><text x="26" y="46" font-size="40" fill="#ffd700">⭐</text><text x="4" y="28" font-size="22" fill="#ff6eb4">⭐</text><text x="60" y="24" font-size="18" fill="#a78bfa">✦</text><text x="62" y="60" font-size="22" fill="#60a5fa">⭐</text><text x="6" y="66" font-size="15" fill="#ffd700">✦</text><text x="36" y="84" font-size="15" fill="#ff6eb4">✦</text></svg>` },
+    { id:'sb5', label:'بالون قلب', w:70, h:100, svg:`<svg viewBox="0 0 70 100" xmlns="http://www.w3.org/2000/svg"><path d="M35 28 C35 28 12 14 12 32 C12 50 35 65 35 65 C35 65 58 50 58 32 C58 14 35 28 35 28 Z" fill="#ff6eb4" stroke="#db2777" stroke-width="2"/><path d="M22 24 Q28 17 35 23" stroke="rgba(255,255,255,.65)" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M35 65 Q32 78 35 96" stroke="#db2777" stroke-width="1.5" fill="none" stroke-linecap="round"/><polygon points="35,68 32,73 38,73" fill="#db2777"/></svg>` },
+  ],
+  jewelry: [
+    { id:'sj1', label:'عقد جوهر', w:100, h:62, svg:`<svg viewBox="0 0 100 62" xmlns="http://www.w3.org/2000/svg"><path d="M8 10 Q50 56 92 10" fill="none" stroke="#FFD700" stroke-width="3" stroke-linecap="round"/><circle cx="18" cy="25" r="5" fill="#ff6eb4" stroke="#FFD700" stroke-width="1.5"/><circle cx="32" cy="42" r="5" fill="#a78bfa" stroke="#FFD700" stroke-width="1.5"/><circle cx="50" cy="50" r="8" fill="#ffd700" stroke="#FFA500" stroke-width="2"/><circle cx="50" cy="50" r="3.5" fill="white" opacity=".75"/><circle cx="68" cy="42" r="5" fill="#60a5fa" stroke="#FFD700" stroke-width="1.5"/><circle cx="82" cy="25" r="5" fill="#ec4899" stroke="#FFD700" stroke-width="1.5"/></svg>` },
+    { id:'sj2', label:'أقراط ذهبية', w:80, h:78, svg:`<svg viewBox="0 0 80 78" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="14" r="5" fill="#ffd700" stroke="#FFA500" stroke-width="1.5"/><line x1="18" y1="19" x2="18" y2="30" stroke="#FFD700" stroke-width="2"/><polygon points="18,32 21,40 18,48 15,40" fill="#ffd700"/><circle cx="18" cy="40" r="5" fill="#ff6eb4" stroke="#FFA500" stroke-width="1.5"/><circle cx="62" cy="14" r="5" fill="#ffd700" stroke="#FFA500" stroke-width="1.5"/><line x1="62" y1="19" x2="62" y2="30" stroke="#FFD700" stroke-width="2"/><polygon points="62,32 65,40 62,48 59,40" fill="#ffd700"/><circle cx="62" cy="40" r="5" fill="#a78bfa" stroke="#FFA500" stroke-width="1.5"/></svg>` },
+    { id:'sj3', label:'سوار ألوان', w:100, h:52, svg:`<svg viewBox="0 0 100 52" xmlns="http://www.w3.org/2000/svg"><path d="M10 26 Q50 46 90 26" fill="none" stroke="#FFD700" stroke-width="6" stroke-linecap="round"/><path d="M10 26 Q50 6 90 26" fill="none" stroke="#FFD700" stroke-width="6" stroke-linecap="round"/><circle cx="25" cy="21" r="5" fill="#ff6eb4" stroke="#FFD700" stroke-width="1.5"/><circle cx="40" cy="15" r="5" fill="#a78bfa" stroke="#FFD700" stroke-width="1.5"/><circle cx="50" cy="13" r="6" fill="#60a5fa" stroke="#FFD700" stroke-width="1.5"/><circle cx="60" cy="15" r="5" fill="#22c55e" stroke="#FFD700" stroke-width="1.5"/><circle cx="75" cy="21" r="5" fill="#ffd700" stroke="#FFA500" stroke-width="1.5"/></svg>` },
+    { id:'sj4', label:'جوهرة ماسية', w:70, h:90, svg:`<svg viewBox="0 0 70 90" xmlns="http://www.w3.org/2000/svg"><polygon points="35,5 62,26 56,72 35,82 14,72 8,26" fill="#60a5fa" stroke="#3b82f6" stroke-width="2.5"/><polygon points="35,5 62,26 35,36" fill="rgba(255,255,255,.45)"/><polygon points="35,5 8,26 35,36" fill="rgba(255,255,255,.25)"/><polygon points="35,36 62,26 56,72 35,62" fill="rgba(0,0,0,.1)"/><polygon points="35,36 8,26 14,72 35,62" fill="rgba(255,255,255,.15)"/><path d="M18 20 Q30 12 44 18" stroke="white" stroke-width="2" fill="none" opacity=".75" stroke-linecap="round"/></svg>` },
+    { id:'sj5', label:'قلب لامع', w:80, h:76, svg:`<svg viewBox="0 0 80 76" xmlns="http://www.w3.org/2000/svg"><path d="M40 66 C40 66 4 44 4 22 C4 10 13 2 23 6 C31 8 38 18 40 22 C42 18 49 8 57 6 C67 2 76 10 76 22 C76 44 40 66 40 66 Z" fill="#ff6eb4" stroke="#db2777" stroke-width="2.5"/><path d="M16 16 Q26 9 36 16" stroke="rgba(255,255,255,.72)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M40 56 C40 56 18 42 18 30 C18 24 23 20 28 22 C33 23 38 29 40 32 C42 29 47 23 52 22 C57 20 62 24 62 30 C62 42 40 56 40 56 Z" fill="rgba(255,255,255,.2)"/></svg>` },
+  ],
+  extras: [
+    { id:'se1', label:'قلعة حالمة', w:100, h:100, svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="42" width="40" height="54" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/><rect x="30" y="35" width="8" height="12" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/><rect x="43" y="35" width="8" height="12" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/><rect x="56" y="35" width="8" height="12" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/><rect x="10" y="56" width="24" height="40" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/><rect x="66" y="56" width="24" height="40" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/><rect x="10" y="49" width="6" height="10" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/><rect x="19" y="49" width="6" height="10" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/><rect x="66" y="49" width="6" height="10" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/><rect x="75" y="49" width="6" height="10" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/><path d="M40 96 L40 74 Q50 64 60 74 L60 96 Z" fill="#a78bfa"/><rect x="36" y="50" width="10" height="12" rx="5" fill="#a78bfa" opacity=".8"/><rect x="54" y="50" width="10" height="12" rx="5" fill="#a78bfa" opacity=".8"/><rect x="16" y="63" width="8" height="10" rx="4" fill="#60a5fa" opacity=".8"/><rect x="72" y="63" width="8" height="10" rx="4" fill="#60a5fa" opacity=".8"/><line x1="50" y1="35" x2="50" y2="15" stroke="#ec4899" stroke-width="2"/><polygon points="50,15 65,21 50,27" fill="#ff6eb4"/></svg>` },
+    { id:'se2', label:'يونيكورن', w:100, h:90, svg:`<svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg"><ellipse cx="57" cy="58" rx="30" ry="20" fill="white" stroke="#f9a8d4" stroke-width="2"/><circle cx="22" cy="42" r="16" fill="white" stroke="#f9a8d4" stroke-width="2"/><polygon points="22,26 18,10 26,10" fill="#ffd700" stroke="#FFA500" stroke-width="1.5"/><path d="M30 32 Q38 25 38 45" stroke="#ff6eb4" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M32 30 Q42 22 40 44" stroke="#a78bfa" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M34 29 Q46 20 42 43" stroke="#ffd700" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse cx="16" cy="42" rx="4" ry="4.5" fill="#7c3aed"/><circle cx="17" cy="40" r="1.5" fill="white"/><rect x="35" y="74" width="7" height="16" rx="3" fill="white" stroke="#f9a8d4" stroke-width="1.5"/><rect x="47" y="74" width="7" height="16" rx="3" fill="white" stroke="#f9a8d4" stroke-width="1.5"/><rect x="60" y="74" width="7" height="16" rx="3" fill="white" stroke="#f9a8d4" stroke-width="1.5"/><rect x="72" y="74" width="7" height="16" rx="3" fill="white" stroke="#f9a8d4" stroke-width="1.5"/><path d="M84 55 Q96 45 94 68 Q90 78 84 72" stroke="#ff6eb4" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M84 55 Q98 48 96 64" stroke="#a78bfa" stroke-width="3" fill="none" stroke-linecap="round"/><text x="28" y="16" font-size="8" fill="#ffd700">✦</text><text x="14" y="12" font-size="7" fill="#ff6eb4">✦</text></svg>` },
+    { id:'se3', label:'فراشة', w:90, h:80, svg:`<svg viewBox="0 0 90 80" xmlns="http://www.w3.org/2000/svg"><ellipse cx="25" cy="28" rx="22" ry="18" fill="rgba(168,85,247,0.8)" stroke="#7c3aed" stroke-width="2" transform="rotate(-15,25,28)"/><ellipse cx="22" cy="56" rx="14" ry="12" fill="rgba(236,72,153,0.75)" stroke="#db2777" stroke-width="2" transform="rotate(8,22,56)"/><ellipse cx="65" cy="28" rx="22" ry="18" fill="rgba(168,85,247,0.8)" stroke="#7c3aed" stroke-width="2" transform="rotate(15,65,28)"/><ellipse cx="68" cy="56" rx="14" ry="12" fill="rgba(236,72,153,0.75)" stroke="#db2777" stroke-width="2" transform="rotate(-8,68,56)"/><ellipse cx="45" cy="42" rx="4" ry="20" fill="#4c1d95"/><circle cx="25" cy="23" r="5" fill="rgba(255,255,255,.45)"/><circle cx="65" cy="23" r="5" fill="rgba(255,255,255,.45)"/><text x="15" y="28" font-size="7" fill="#ffd700">✦</text><text x="64" y="28" font-size="7" fill="#ffd700">✦</text></svg>` },
+    { id:'se4', label:'موجة بحر', w:100, h:70, svg:`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg"><path d="M0 45 Q12 30 25 45 Q38 60 50 45 Q62 30 75 45 Q88 60 100 45 L100 70 L0 70 Z" fill="rgba(6,182,212,0.8)"/><path d="M0 35 Q12 20 25 35 Q38 50 50 35 Q62 20 75 35 Q88 50 100 35 L100 70 L0 70 Z" fill="rgba(6,182,212,0.5)"/><path d="M0 28 Q12 14 25 28 Q38 42 50 28 Q62 14 75 28 Q88 42 100 28" fill="none" stroke="#22d3ee" stroke-width="2.5"/><text x="5" y="22" font-size="10" fill="white" opacity=".8">🐚</text><text x="42" y="18" font-size="8" fill="white" opacity=".8">✦</text><text x="78" y="22" font-size="10" fill="white" opacity=".8">🐠</text></svg>` },
+    { id:'se5', label:'غيمة وبريق', w:100, h:72, svg:`<svg viewBox="0 0 100 72" xmlns="http://www.w3.org/2000/svg"><circle cx="40" cy="42" r="22" fill="white" opacity=".95"/><circle cx="60" cy="44" r="18" fill="white" opacity=".95"/><circle cx="28" cy="50" r="15" fill="white" opacity=".95"/><circle cx="50" cy="34" r="20" fill="white" opacity=".95"/><circle cx="70" cy="40" r="14" fill="white" opacity=".95"/><text x="32" y="50" font-size="11" fill="#ffd700">⭐</text><text x="50" y="45" font-size="9" fill="#ff6eb4">✦</text><text x="42" y="35" font-size="8" fill="#a78bfa">✦</text></svg>` },
+  ],
+};
+
+/* ─── Init dress screen ─── */
+function initDressScreen() {
+  const info = CHAR_INFO[dsChar] || { emoji: '🎨', name: '' };
+  document.getElementById('ds-char-emoji').textContent = info.emoji;
+  document.getElementById('ds-char-name').textContent  = info.name;
+
+  // Show painted artwork
+  const img = document.getElementById('ds-painted-img');
+  img.src = dsPaintedDataUrl;
+
+  // Re-inject same outline SVG as M3
+  document.getElementById('ds-outline-overlay').innerHTML = getCharOutlineSVG(dsChar);
+
+  // Clear any previously placed stickers
+  document.getElementById('ds-stickers-layer').innerHTML = '';
+  dsSelectedEl = null;
+
+  // Stars
+  if (!dsStarsGenerated) {
+    generateStars('stars-dress');
+    dsStarsGenerated = true;
+  }
+
+  // Build UI
+  buildDsCatTabs();
+  buildDsStickerPanel('crowns');
+  dsActiveCat = 'crowns';
+}
+
+/* ─── Category tabs ─── */
+function buildDsCatTabs() {
+  const container = document.getElementById('ds-cat-tabs');
+  container.innerHTML = '';
+  DS_CATEGORIES.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'ds-cat-tab' + (cat.id === 'crowns' ? ' ds-tab-active' : '');
+    btn.textContent = cat.label;
+    btn.dataset.cat = cat.id;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.ds-cat-tab').forEach(b => b.classList.remove('ds-tab-active'));
+      btn.classList.add('ds-tab-active');
+      buildDsStickerPanel(cat.id);
+      dsActiveCat = cat.id;
+    });
+    container.appendChild(btn);
+  });
+}
+
+/* ─── Sticker panel for a category ─── */
+function buildDsStickerPanel(catId) {
+  const scroll = document.getElementById('ds-sticker-scroll');
+  scroll.innerHTML = '';
+  const stickers = DS_STICKERS[catId] || [];
+  stickers.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'ds-sticker-btn';
+    btn.setAttribute('aria-label', s.label);
+    btn.innerHTML = s.svg;
+    btn.addEventListener('click', () => {
+      spawnBurstCenter();
+      placeSticker(s);
+    });
+    scroll.appendChild(btn);
+  });
+}
+
+/* ─── Place a sticker on the stage ─── */
+function placeSticker(stickerData) {
+  const stage = document.getElementById('ds-stage');
+  const layer = document.getElementById('ds-stickers-layer');
+
+  // Scale sticker so max dimension = 80px
+  const MAX = 80;
+  const scale = MAX / Math.max(stickerData.w, stickerData.h);
+  const dispW = Math.round(stickerData.w * scale);
+  const dispH = Math.round(stickerData.h * scale);
+
+  const el = document.createElement('div');
+  el.className = 'sticker-on-stage';
+  el.dataset.sid = 'sticker_' + (++dsStickerCount);
+  el.style.width  = dispW + 'px';
+  el.style.height = dispH + 'px';
+
+  // Center on stage
+  const stageW = stage.clientWidth;
+  const stageH = stage.clientHeight;
+  el.style.left = Math.round((stageW - dispW) / 2) + 'px';
+  el.style.top  = Math.round((stageH - dispH) / 2) + 'px';
+
+  // Delete button
+  const delBtn = document.createElement('div');
+  delBtn.className = 'sticker-del';
+  delBtn.textContent = '×';
+  delBtn.addEventListener('pointerdown', e => {
+    e.stopPropagation();
+    el.remove();
+    dsSelectedEl = null;
+  });
+  el.appendChild(delBtn);
+
+  // SVG content
+  el.insertAdjacentHTML('beforeend', stickerData.svg);
+
+  layer.appendChild(el);
+  makeDraggable(el, stage);
+  dsSelectSticker(el);
+}
+
+/* ─── Make a sticker draggable ─── */
+function makeDraggable(el, stage) {
+  let isDragging = false;
+  let startPX, startPY, startLeft, startTop;
+
+  el.addEventListener('pointerdown', e => {
+    if (e.target.classList.contains('sticker-del')) return;
+    e.stopPropagation();
+    dsSelectSticker(el);
+    isDragging = true;
+    startPX   = e.clientX;
+    startPY   = e.clientY;
+    startLeft = parseInt(el.style.left) || 0;
+    startTop  = parseInt(el.style.top)  || 0;
+    el.setPointerCapture(e.pointerId);
+  }, { passive: false });
+
+  el.addEventListener('pointermove', e => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const stageRect = stage.getBoundingClientRect();
+    const dx = e.clientX - startPX;
+    const dy = e.clientY - startPY;
+    const elW = el.offsetWidth;
+    const elH = el.offsetHeight;
+    const newLeft = Math.max(-elW * 0.3, Math.min(stageRect.width  - elW * 0.7, startLeft + dx));
+    const newTop  = Math.max(-elH * 0.3, Math.min(stageRect.height - elH * 0.7, startTop  + dy));
+    el.style.left = newLeft + 'px';
+    el.style.top  = newTop  + 'px';
+  }, { passive: false });
+
+  el.addEventListener('pointerup',     () => { isDragging = false; });
+  el.addEventListener('pointercancel', () => { isDragging = false; });
+}
+
+/* ─── Select / deselect stickers ─── */
+function dsSelectSticker(el) {
+  if (dsSelectedEl && dsSelectedEl !== el) {
+    dsSelectedEl.classList.remove('ds-selected');
+  }
+  el.classList.add('ds-selected');
+  dsSelectedEl = el;
+  // Bring to front
+  const layer = document.getElementById('ds-stickers-layer');
+  layer.appendChild(el);
+}
+
+function dsDeselect(e) {
+  // Only deselect if the click is on the backdrop (not on a sticker)
+  if (e.target === document.getElementById('ds-stickers-layer') ||
+      e.target === document.getElementById('ds-stage') ||
+      e.target === document.getElementById('ds-painted-img')) {
+    if (dsSelectedEl) {
+      dsSelectedEl.classList.remove('ds-selected');
+      dsSelectedEl = null;
+    }
+  }
+}
+
+/* ─── Navigation ─── */
+function goToCanvasFromDress() {
+  showScreen('canvas-screen');
+}
+
+/* ═══════════════════════════════════════════════════
+   M5 — SHOWCASE & GALLERY & PWA
+═══════════════════════════════════════════════════ */
+
+/* ─── Confetti launcher ─── */
+const CONFETTI_COLORS = [
+  '#ff6eb4','#a78bfa','#ffd700','#60a5fa','#34d399',
+  '#f97316','#ec4899','#c084fc','#facc15','#38bdf8'
+];
+
+function launchConfetti() {
+  const total = window.innerWidth < 480 ? 55 : 90;
+  for (let i = 0; i < total; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      const size = 7 + Math.random() * 8;
+      el.style.cssText = `
+        left:${Math.random() * 100}%;
+        width:${size}px; height:${size * 1.4}px;
+        background:${CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)]};
+        border-radius:${Math.random() > 0.5 ? '50%' : '3px'};
+        animation-duration:${1.8 + Math.random() * 1.8}s;
+        animation-delay:${Math.random() * 0.4}s;
+        transform-origin: center;
+      `;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }, i * 18);
+  }
+}
+
+/* ─── Go to Showcase ─── */
+let scFinalDataUrl   = null;
+let scFinalChar      = null;
+let scStarsGenerated = false;
+
+function goToShowcase() {
+  // Capture final composite: painted + stickers flattened
+  const stage      = document.getElementById('ds-stage');
+  const stageW     = stage.clientWidth;
+  const stageH     = stage.clientHeight;
+
+  // Build composite canvas
+  const comp   = document.createElement('canvas');
+  comp.width   = stageW * window.devicePixelRatio;
+  comp.height  = stageH * window.devicePixelRatio;
+  const ctx    = comp.getContext('2d');
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  // 1) painted background
+  const paintImg = document.getElementById('ds-painted-img');
+  ctx.drawImage(paintImg, 0, 0, stageW, stageH);
+
+  // 2) outline SVG as image
+  const svgEl = document.querySelector('#ds-outline-overlay svg');
+  if (svgEl) {
+    const svgStr  = new XMLSerializer().serializeToString(svgEl);
+    const svgBlob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+    const svgUrl  = URL.createObjectURL(svgBlob);
+    const svgImg  = new Image();
+    svgImg.onload = function() {
+      ctx.drawImage(svgImg, 0, 0, stageW, stageH);
+      URL.revokeObjectURL(svgUrl);
+      // 3) stickers
+      _drawStickersToCanvas(ctx, stage, stageW, stageH);
+      _finalizeShowcase(comp);
+    };
+    svgImg.src = svgUrl;
+  } else {
+    _drawStickersToCanvas(ctx, stage, stageW, stageH);
+    _finalizeShowcase(comp);
+  }
+}
+
+function _drawStickersToCanvas(ctx, stage, stageW, stageH) {
+  const stickers = stage.querySelectorAll('.sticker-on-stage');
+  stickers.forEach(el => {
+    const left   = parseInt(el.style.left) || 0;
+    const top    = parseInt(el.style.top)  || 0;
+    const w      = el.offsetWidth;
+    const h      = el.offsetHeight;
+    const svgEl  = el.querySelector('svg');
+    if (!svgEl) return;
+    const svgStr = new XMLSerializer().serializeToString(svgEl);
+    const blob   = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+    const url    = URL.createObjectURL(blob);
+    const img    = new Image();
+    img.onload   = () => { ctx.drawImage(img, left, top, w, h); URL.revokeObjectURL(url); };
+    img.src      = url;
+  });
+}
+
+function _finalizeShowcase(comp) {
+  scFinalDataUrl = comp.toDataURL('image/png');
+  scFinalChar    = dsChar;
+
+  // Render on showcase canvas
+  const sc = document.getElementById('sc-final-canvas');
+  sc.width  = comp.width;
+  sc.height = comp.height;
+  sc.getContext('2d').drawImage(comp, 0, 0);
+  // CSS display size
+  sc.style.width  = '100%';
+  sc.style.height = 'auto';
+
+  // Char info
+  const info = CHAR_INFO[scFinalChar] || { emoji: '🌟', name: 'عروستكِ' };
+  document.getElementById('sc-char-emoji').textContent = info.emoji;
+  document.getElementById('sc-char-label').textContent = info.name;
+
+  // Stars
+  if (!scStarsGenerated) {
+    generateStars('stars-showcase');
+    scStarsGenerated = true;
+  }
+
+  // Show screen
+  showScreen('showcase-screen');
+
+  // Confetti + burst
+  setTimeout(() => {
+    launchConfetti();
+    spawnBurstCenter();
+  }, 300);
+
+  // Load gallery
+  scRenderGallery();
+}
+
+/* ─── Back from showcase ─── */
+function goToDressFromShowcase() {
+  showScreen('dress-screen');
+}
+
+/* ─── Play again ─── */
+function scPlayAgain() {
+  spawnBurstCenter();
+  setTimeout(() => {
+    showScreen('welcome-screen');
+    document.getElementById('welcome-screen').classList.remove('slide-out-left');
+    selectedChar = null;
+    document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
+  }, 350);
+}
+
+/* ─── Download artwork ─── */
+function scDownloadArtwork() {
+  if (!scFinalDataUrl) return;
+  const a    = document.createElement('a');
+  a.href     = scFinalDataUrl;
+  const name = CHAR_INFO[scFinalChar] ? CHAR_INFO[scFinalChar].name : 'عروستي';
+  a.download = `استوديو-الأحلام-${name}.png`;
+  a.click();
+  scShowToast('✅ تم التحميل بنجاح! 🎀');
+}
+
+/* ─── Save to gallery (localStorage) ─── */
+const GALLERY_KEY = 'dreamStudio_gallery_v1';
+const GALLERY_MAX = 12;
+
+function scGetGallery() {
+  try { return JSON.parse(localStorage.getItem(GALLERY_KEY)) || []; }
+  catch { return []; }
+}
+function scSetGallery(arr) {
+  try { localStorage.setItem(GALLERY_KEY, JSON.stringify(arr)); } catch {}
+}
+
+function scSaveToGallery() {
+  if (!scFinalDataUrl) return;
+  const gallery = scGetGallery();
+
+  if (gallery.length >= GALLERY_MAX) {
+    scShowToast('⚠️ المعرض ممتلئ — احذفي صورة أولاً');
+    return;
+  }
+
+  const info  = CHAR_INFO[scFinalChar] || { emoji: '🌟', name: 'عروستي' };
+  const entry = {
+    id:    Date.now(),
+    data:  scFinalDataUrl,
+    char:  scFinalChar,
+    emoji: info.emoji,
+    name:  info.name,
+    date:  new Date().toLocaleDateString('ar-SA'),
+  };
+
+  gallery.unshift(entry);
+  scSetGallery(gallery);
+  spawnBurstCenter();
+  scShowToast('💖 حُفظت في المعرض!');
+  scRenderGallery();
+}
+
+/* ─── Render gallery grid ─── */
+function scRenderGallery() {
+  const grid    = document.getElementById('sc-gallery-grid');
+  const gallery = scGetGallery();
+  grid.innerHTML = '';
+
+  if (gallery.length === 0) {
+    grid.innerHTML = '<div class="gallery-empty">لا توجد لوحات محفوظة بعد 🎨<br>احفظي عملكِ أولاً!</div>';
+    return;
+  }
+
+  gallery.forEach((entry, idx) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'gallery-thumb';
+    thumb.style.animationDelay = (idx * 0.06) + 's';
+
+    const img       = document.createElement('img');
+    img.src         = entry.data;
+    img.alt         = entry.name;
+    img.loading     = 'lazy';
+
+    const del       = document.createElement('div');
+    del.className   = 'thumb-del';
+    del.textContent = '×';
+    del.title       = 'حذف';
+    del.addEventListener('pointerdown', e => {
+      e.stopPropagation();
+      scDeleteFromGallery(entry.id);
+    });
+
+    // Tap to enlarge (full-screen preview)
+    img.addEventListener('click', () => scPreviewGalleryItem(entry));
+
+    thumb.appendChild(img);
+    thumb.appendChild(del);
+    grid.appendChild(thumb);
+  });
+}
+
+/* ─── Delete from gallery ─── */
+function scDeleteFromGallery(id) {
+  const gallery = scGetGallery().filter(e => e.id !== id);
+  scSetGallery(gallery);
+  scRenderGallery();
+  scShowToast('🗑️ تم الحذف');
+}
+
+/* ─── Preview a gallery item fullscreen ─── */
+function scPreviewGalleryItem(entry) {
+  const overlay = document.createElement('div');
+  Object.assign(overlay.style, {
+    position: 'fixed', inset: '0', zIndex: '20000',
+    background: 'rgba(0,0,0,.85)', display: 'flex',
+    flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+    padding: '20px', cursor: 'pointer',
+  });
+  const img   = document.createElement('img');
+  img.src     = entry.data;
+  img.alt     = entry.name;
+  Object.assign(img.style, {
+    maxWidth: '90vw', maxHeight: '75vh',
+    borderRadius: '18px', boxShadow: '0 12px 40px rgba(0,0,0,.5)',
+    border: '4px solid rgba(255,255,255,.5)',
+  });
+  const label = document.createElement('p');
+  label.textContent = `${entry.emoji} ${entry.name} — ${entry.date}`;
+  Object.assign(label.style, {
+    color: '#fff', fontWeight: '800', fontSize: '16px',
+    marginTop: '14px', fontFamily: 'Tajawal,sans-serif',
+  });
+  const close = document.createElement('p');
+  close.textContent = '✕ اضغطي للإغلاق';
+  Object.assign(close.style, {
+    color: 'rgba(255,255,255,.6)', fontSize: '13px', marginTop: '8px',
+    fontFamily: 'Tajawal,sans-serif', fontWeight: '700',
+  });
+  overlay.appendChild(img);
+  overlay.appendChild(label);
+  overlay.appendChild(close);
+  overlay.addEventListener('click', () => overlay.remove());
+  document.body.appendChild(overlay);
+}
+
+/* ─── Toast helper ─── */
+function scShowToast(msg) {
+  const t = document.getElementById('sc-toast');
+  t.textContent = msg;
+  t.classList.add('sc-toast-show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('sc-toast-show'), 2800);
+}
+
+/* ═══════════════════════════════════════════════════
+   PWA — SERVICE WORKER + INSTALL PROMPT
+═══════════════════════════════════════════════════ */
+
+/* ── Inline manifest via Blob URL ── */
+(function injectManifest() {
+  const manifest = {
+    name: 'استوديو الأحلام — مصممة العرائس الصغيرة',
+    short_name: 'استوديو الأحلام',
+    description: 'تطبيق تفاعلي للأطفال — تلويناً وتزييناً للشخصيات الخيالية',
+    start_url: './',
+    display: 'standalone',
+    orientation: 'portrait',
+    background_color: '#ffb3de',
+    theme_color: '#ff6eb4',
+    lang: 'ar',
+    dir: 'rtl',
+    categories: ['games', 'kids', 'education'],
+    icons: [
+      {
+        src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23ff6eb4'/%3E%3Ctext x='50%25' y='55%25' font-size='320' text-anchor='middle' dominant-baseline='middle'%3E🌟%3C/text%3E%3C/svg%3E",
+        sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable'
+      }
+    ],
+    screenshots: [],
+  };
+
+  try {
+    const blob   = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+    const url    = URL.createObjectURL(blob);
+    document.getElementById('pwa-manifest-link').setAttribute('href', url);
+  } catch(e) {}
+})();
+
+/* ── Register Service Worker (inline via Blob) ── */
+(function registerSW() {
+  if (!('serviceWorker' in navigator)) return;
+
+  const swCode = `
+const CACHE = 'dream-studio-v1';
+const CORE  = ['./', './index.html'];
+
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      const network = fetch(e.request).then(res => {
+        if (res && res.status === 200 && e.request.url.startsWith(self.location.origin)) {
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+        }
+        return res;
+      }).catch(() => cached);
+      return cached || network;
+    })
+  );
+});
+`;
+
+  try {
+    const blob = new Blob([swCode], { type: 'application/javascript' });
+    const url  = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(url, { scope: './' })
+      .then(reg => console.log('✅ SW registered', reg.scope))
+      .catch(err => console.warn('SW (Blob) failed:', err));
+  } catch(e) {
+    console.warn('SW registration error:', e);
+  }
+})();
+
+/* ── Install prompt handling ── */
+let _deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _deferredPrompt = e;
+  // Don't show if already dismissed in this session
+  if (sessionStorage.getItem('pwa_dismissed')) return;
+  setTimeout(() => {
+    document.getElementById('pwa-banner').classList.add('pwa-visible');
+  }, 3500);
+});
+
+function pwaTriggerInstall() {
+  const banner = document.getElementById('pwa-banner');
+  banner.classList.remove('pwa-visible');
+  if (!_deferredPrompt) return;
+  _deferredPrompt.prompt();
+  _deferredPrompt.userChoice.then(result => {
+    if (result.outcome === 'accepted') scShowToast('🎉 تم التثبيت! شكراً 💖');
+    _deferredPrompt = null;
+  });
+}
+
+function pwaDismiss() {
+  sessionStorage.setItem('pwa_dismissed', '1');
+  document.getElementById('pwa-banner').classList.remove('pwa-visible');
+  document.getElementById('pwa-ios-hint').classList.remove('pwa-visible');
+}
+
+// iOS Safari — show manual hint
+(function checkIos() {
+  const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = ('standalone' in navigator) && navigator.standalone;
+  if (isIos && !isStandalone && !sessionStorage.getItem('pwa_dismissed')) {
+    setTimeout(() => {
+      document.getElementById('pwa-ios-hint').classList.add('pwa-visible');
+    }, 5000);
+  }
+})();
+
+window.addEventListener('appinstalled', () => {
+  _deferredPrompt = null;
+  document.getElementById('pwa-banner').classList.remove('pwa-visible');
+  scShowToast('🌟 تم تثبيت التطبيق بنجاح!');
+});
+
+</script>
+
+</body>
+</html>
